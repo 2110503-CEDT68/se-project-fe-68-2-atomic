@@ -1,12 +1,7 @@
 'use server'
-export default async function getAnnouncements(token:string){
-   const respond = await fetch(`${process.env.BACKEND_URL}/api/announcements`,{
-	method: "GET",
-	 headers: {
-		authorization: `Bearer ${token}`
-	 },
-	 next: {tags: ['announcements'], revalidate: 3600}
-   })
+export default async function getAnnouncements(){
+   const respond = await fetch(`${process.env.BACKEND_URL}/api/announcements`)
+   
    if(!respond.ok){
 	throw new Error("Failed to get Announcements")
    }
