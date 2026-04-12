@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AnnouncementCard from './AnnouncementCard';
 
-export default function AnnouncementPanel({announcementJson, isAdmin=false, showSearch=false}: {announcementJson: AnnouncementJson, isAdmin?: boolean, showSearch?: boolean}) {
+export default function AnnouncementPanel({announcementData, isAdmin=false, showSearch=false}: {announcementData: AnnouncementItem[], isAdmin?: boolean, showSearch?: boolean}) {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
-  const filteredAnnouncement = announcementJson.data.filter((announcement: any)=>
+  const filteredAnnouncement = announcementData.filter((announcement: any)=>
     announcement.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
