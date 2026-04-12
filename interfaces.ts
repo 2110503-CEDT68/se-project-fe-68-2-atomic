@@ -1,6 +1,6 @@
 interface DentistItem {
 	id:string,
-    name:string
+  name:string
 	yearsOfExperience:number,
 	areaOfExpertise:string,
 	imageURL:string,
@@ -38,4 +38,26 @@ interface BookingJson {
 interface BookingJsonSingle {
 	success:boolean,
 	data: BookingItem
+}
+
+interface AnnouncementJson {
+	success:boolean,
+	count:number,
+	pagination: Object,
+	data : AnnouncementItem[]
+}
+
+interface AnnouncementItem {
+  _id: string;               
+  author: {
+		_id: string;
+		name: string;
+		email: string;
+	}
+  title: string;
+  description: string;
+  logoURL: string;
+  bannerURL: string;
+  isEdited: boolean;
+  createdAt: Date | string;   
 }

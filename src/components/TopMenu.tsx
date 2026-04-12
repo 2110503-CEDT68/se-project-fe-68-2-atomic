@@ -30,6 +30,7 @@ export default async function TopMenu() {
              <TopMenuItem title='Home' pageref='/'/>
              <TopMenuItem title='Dentists' pageref='/dentists'/>
              <TopMenuItem title='Booking' pageref='/booking'/>
+             <TopMenuItem title='Announcement' pageref='/announcement'/>
           </div>
         </div>
 
