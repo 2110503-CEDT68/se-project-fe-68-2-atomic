@@ -1,15 +1,25 @@
 'use client'
-import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import AnnouncementCard from './AnnouncementCard';
+import { Pagination, Stack } from '@mui/material';
 
-export default function AnnouncementPanel({announcementData, isAdmin=false, showSearch=false}: {announcementData: AnnouncementItem[], isAdmin?: boolean, showSearch?: boolean}) {
+export default function AnnouncementPanel({currentPage, announcementData, isAdmin=false, showSearch=false}: {currentPage: number, announcementData: AnnouncementItem[], isAdmin?: boolean, showSearch?: boolean}) {
   const router = useRouter()
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
   const [searchTerm, setSearchTerm] = useState('')
   const filteredAnnouncement = announcementData.filter((announcement: any)=>
     announcement.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const handleChangePage = (e: React.ChangeEvent<unknown>, value: number) => {
+    const params = new URLSearchParams(searchParams)
+    params.set('page', value.toString())
+
+    router.push(`${pathname}?${params}`)
+  }
 
   return (
     <section className="pt-8 pb-16 px-8 bg-white mb-6">
@@ -32,6 +42,19 @@ export default function AnnouncementPanel({announcementData, isAdmin=false, show
 
         }
 
+        {
+          isAdmin && showSearch ?
+          <div className="flex flex-row justify-center gap-4 my-5">
+            <button
+              onClick={() => router.push(`/announcement/add`)}
+              className="cursor-pointer bg-black text-white text-xl font-bold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
+              >
+                Add Announcement
+            </button>
+          </div>
+          : null
+        }
+
         <div className="flex flex-wrap justify-evenly gap-8 mt-8">
               {
                 filteredAnnouncement.length === 0 ?
@@ -43,18 +66,9 @@ export default function AnnouncementPanel({announcementData, isAdmin=false, show
               }
         </div>
 
-        {
-          isAdmin && showSearch ?
-          <div className="flex flex-row justify-center gap-4">
-            <button
-              onClick={() => router.push(`/announcement/add`)}
-              className="cursor-pointer bg-black text-white text-xl font-bold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
-              >
-                Add Announcement
-            </button>
-          </div>
-          : null
-        }
+        <div className='flex justify-center mt-20'>
+          <Pagination count={10} color="primary" page={currentPage} onChange={handleChangePage}/>
+        </div>
       </div>
     </section>
   );

@@ -7,18 +7,21 @@ import getAnnouncements from "@/libs/getAnnoucements";
 
 // import getAnnouncements from "@/libs/getAnnouncements";
 
-export default async function AnnouncementPage(){
+export default async function AnnouncementPage({searchParams} : {searchParams: Promise<{ page?: string }>}){
+
+  const { page } = await searchParams;
+  const currentPage = await Number(page) || 1;
   
   const session = await getServerSession(authOptions)
   const token = session?.user.token
   const isAdmin = session?.user.role === 'admin'
 
-  const announcements = await getAnnouncements();
+  const announcements = await getAnnouncements(currentPage);
 
   return(
     <Suspense fallback={<Loading/>}>
       <div className="text-center p-5">
-        <AnnouncementPanel announcementData={announcements} isAdmin={isAdmin} showSearch={true}/>
+        <AnnouncementPanel page={currentPage} announcementData={announcements} isAdmin={isAdmin} showSearch={true}/>
       </div>
     </Suspense>
   )

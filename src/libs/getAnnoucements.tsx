@@ -1,6 +1,6 @@
 'use server'
-export default async function getAnnouncements(){
-   const respond = await fetch(`${process.env.BACKEND_URL}/api/announcements`)
+export default async function getAnnouncements(currentPage: number){
+   const respond = await fetch(`${process.env.BACKEND_URL}/api/announcements?page=${currentPage}`)
    
    if(!respond.ok){
 	throw new Error("Failed to get Announcements")
