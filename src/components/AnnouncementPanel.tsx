@@ -62,7 +62,7 @@
                   <p>No announcement found</p> 
                   :
                   filteredAnnouncement.map((announcement: AnnouncementItem) => (
-                    <Link href={`/announcement/${announcement._id}`} className="w-[45%] h-[220px] rounded-xl shadow-lg hover:shadow-2xl transition-shadow overflow-hidden m-5 font-sukhumvit">
+                    <Link key={announcement._id} href={`/announcement/${announcement._id}`} className="w-[45%] h-[220px] rounded-xl shadow-lg hover:shadow-2xl transition-shadow overflow-hidden m-5 font-sukhumvit">
                       <AnnouncementCard key={announcement._id} id={announcement._id} logoSrc={announcement.logoURL} title={announcement.title} date={announcement.createdAt}/>
                     </Link>
                   ))
