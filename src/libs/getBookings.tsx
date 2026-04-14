@@ -1,6 +1,7 @@
 'use server'
 export default async function getBookings(token: string) {
 
+	console.log(token)
 	const respond = await fetch(`${process.env.BACKEND_URL}/api/bookings`, {
 		method: "GET",
 		headers: {
