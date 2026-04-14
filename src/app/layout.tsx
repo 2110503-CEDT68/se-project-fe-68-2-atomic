@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import TopMenu from "@/components/TopMenu";
 import NextAuthProvider from "@/providers/NextAuthProvider";
@@ -16,6 +17,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const sukhumvit = localFont({
+  src: "../../public/fonts/SukhumvitSet-Medium.ttf",
+  variable: "--font-sukhumvit",
+});
+
 export const metadata: Metadata = {
   title: "Dentist Booking App",
   description: "Developed by Gucode Group",
@@ -30,9 +36,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${sukhumvit.variable} antialiased`}>
         <NextAuthProvider session={session}>
-          <TopMenu/>
+          <TopMenu />
           {children}
         </NextAuthProvider>
       </body>

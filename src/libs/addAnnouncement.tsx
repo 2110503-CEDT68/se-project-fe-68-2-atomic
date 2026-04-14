@@ -2,7 +2,7 @@
 import { revalidateTag } from 'next/cache'
 
 export default async function addAnnouncement(
-    name: string, 
+    title: string, 
     description: string, 
     logoURL: string, 
     bannerURL: string, 
@@ -15,10 +15,10 @@ export default async function addAnnouncement(
 			authorization: `Bearer ${token}`,
 		},
         body: JSON.stringify({ 
-            name: name, 
+            title: title, 
             description: description, 
-            logoURL: logoURL, // หากใช้ Google Drive: 'https://drive.google.com/uc?id=' + logoURL
-            bannerURL: bannerURL 
+            logoURL: 'https://drive.google.com/uc?id=' + logoURL,
+            bannerURL: 'https://drive.google.com/uc?id=' + bannerURL 
         })
     })
 

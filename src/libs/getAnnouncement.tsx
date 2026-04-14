@@ -1,6 +1,6 @@
 'use server'
 
-export default async function getAnnouncement(id: string) {
+export default async function getAnnouncement(id: string): Promise<AnnouncementJsonSingle> {
 	const respond = await fetch(`${process.env.BACKEND_URL}/api/announcements/${id}`, { 
         next: { tags: ['announcements', `announcement-${id}`], revalidate: 3600 } 
     })

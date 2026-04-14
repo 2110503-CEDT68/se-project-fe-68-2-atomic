@@ -43,8 +43,19 @@ interface BookingJsonSingle {
 interface AnnouncementJson {
 	success:boolean,
 	count:number,
-	pagination: Object,
+	pagination: {
+		total: number,
+		next: {
+			page: number,
+			limit: number
+		}
+	},
 	data : AnnouncementItem[]
+}
+
+interface AnnouncementJsonSingle {
+	success:boolean,
+	data:AnnouncementItem
 }
 
 interface AnnouncementItem {
