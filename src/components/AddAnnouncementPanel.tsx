@@ -93,6 +93,8 @@ export default function AddAnnouncementPanel({ token }: { token: any }) {
                   onChange={handleChange}
                   required
                   fullWidth
+                  multiline
+                  rows={2}
                   variant="outlined"
                 />
 
@@ -104,7 +106,7 @@ export default function AddAnnouncementPanel({ token }: { token: any }) {
                   required
                   fullWidth
                   multiline
-                  rows={4} // ให้ช่อง Description ใหญ่ขึ้นหน่อย
+                  rows={10} // ให้ช่อง Description ใหญ่ขึ้นหน่อย
                   variant="outlined"
                 />
 

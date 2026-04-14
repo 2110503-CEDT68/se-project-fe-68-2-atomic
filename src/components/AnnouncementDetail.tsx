@@ -2,9 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { CircularProgress } from "@mui/material";
 
 export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: { announcementJsonReady: AnnouncementJsonSingle, isAdmin: boolean }) {
 
@@ -20,13 +17,25 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
   const year = dateObj.getFullYear();
   const formattedDate = `${day}/${month}/${year}`;
 
+  const formatText = (text: string) => {
+    return text
+      .replace(/\\n|\n/g, '<br />')
+      .replace(/\\t|\t/g, '<span class="ml-8 inline-block"></span>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  }
+
+  const formattedTitle = formatText(announcementData.title)
+
+  const formattedDescription = formatText(announcementData.description)
+
   return (
     <main className="max-w-6xl mx-auto px-8 w-full m-10 font-sukhumvit">
 
       {/* Header */}
       <div>
         <div className="text-3xl my-2">
-          <h1 className="inline font-bold"></h1><h1 className="inline font-normal">{announcementData.title}</h1>
+          <h1 className="inline font-normal" dangerouslySetInnerHTML={{ __html: formattedTitle }} />
+          {/* <h1 className="inline font-bold"></h1><h1 className="inline font-normal">{formattedTitle}</h1> */}
         </div>
 
         <div className="font-semibold opacity-70">
@@ -77,9 +86,13 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
 
       {/* Description */}
       <div className="text-center space-y-2 text-gray-700 leading-relaxed">
-        <p className="text-lg font-medium text-left">
-          {announcementData.description}
-        </p>
+        {/* <p className="text-lg font-medium text-left">
+          {formattedDescription}
+        </p> */}
+        <p 
+          className="text-lg font-medium text-left" 
+          dangerouslySetInnerHTML={{ __html: formattedDescription }} 
+        />
       </div>
 
       {/* Back Button */}

@@ -9,6 +9,15 @@ export default function AnnouncementCard({ id, logoSrc, title, date }: { id: str
   const year = dateObj.getFullYear();
   const formattedDate = `${day}/${month}/${year}`;
 
+  const formatText = (text: string) => {
+    return text
+      .replace(/\\n/g, '<br />')
+      .replace(/\\t/g, '<span class="ml-8 inline-block"></span>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  }
+
+  const formattedTitle = formatText(title);
+
   return (
     <div className="flex flex-row w-[45%] h-[220px] bg-[#e5e5e5] shadow-sm hover:shadow-md transition-shadow overflow-hidden m-5 font-sukhumvit">
 
@@ -38,9 +47,7 @@ export default function AnnouncementCard({ id, logoSrc, title, date }: { id: str
             <span>Date : {formattedDate}</span>
           </div>
 
-          <h2 className="text-[#4a4a4a] text-left text-lg sm:text-xl font-medium leading-snug line-clamp-3">
-            {title}
-          </h2>
+          <h2 className="text-[#4a4a4a] text-left text-lg sm:text-xl font-medium leading-snug line-clamp-3" dangerouslySetInnerHTML={{ __html: formattedTitle }}></h2>
         </div>
 
         <Link key={id} href={`/announcement/${id}`} className="self-end bg-white text-gray-600 px-6 py-2 rounded-full text-sm font-medium shadow-sm hover:bg-gray-50 transition-colors mt-2">
