@@ -7,7 +7,9 @@ export default function AnnouncementCard({ id, logoSrc, title, date }: { id: str
   const day = String(dateObj.getDate()).padStart(2, '0');
   const month = String(dateObj.getMonth() + 1).padStart(2, '0');
   const year = dateObj.getFullYear();
-  const formattedDate = `${day}/${month}/${year}`;
+  const hour = dateObj.getHours();
+  const minute = dateObj.getMinutes();
+  const formattedDate = `${day}/${month}/${year} ${hour}:${minute}`;
 
   const formatText = (text: string) => {
     return text
