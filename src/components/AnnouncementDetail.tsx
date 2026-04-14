@@ -63,7 +63,7 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
           {/* <h1 className="inline font-bold"></h1><h1 className="inline font-normal">{formattedTitle}</h1> */}
         </div>
 
-        <div className="font-semibold opacity-85">
+        <div className="font-semibold opacity-60">
           <div className="flex flex-row">
             <svg
               className="w-5 h-5 mr-2"
@@ -125,7 +125,7 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
         <Link
           key={announcementData._id}
           href={'/announcement'}
-          className="w-fit h-fit cursor-pointer bg-black text-white text-sm font-bold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
+          className="w-fit h-fit cursor-pointer bg-black text-white font-bold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
         >
           Back
         </Link>
