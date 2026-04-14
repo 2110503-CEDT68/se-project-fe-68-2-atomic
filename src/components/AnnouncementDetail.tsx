@@ -59,11 +59,11 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
       {/* Header */}
       <div>
         <div className="text-3xl my-2">
-          <h1 className="inline font-normal" dangerouslySetInnerHTML={{ __html: formattedTitle }} />
+          <h1 className="inline font-bold" dangerouslySetInnerHTML={{ __html: formattedTitle }} />
           {/* <h1 className="inline font-bold"></h1><h1 className="inline font-normal">{formattedTitle}</h1> */}
         </div>
 
-        <div className="font-semibold opacity-70">
+        <div className="font-semibold opacity-85">
           <div className="flex flex-row">
             <svg
               className="w-5 h-5 mr-2"
@@ -125,7 +125,7 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
         <Link
           key={announcementData._id}
           href={'/announcement'}
-          className="py-2 pl-2 pr-10 bg-[#F3F3F3] text-[#676767] drop-shadow-lg hover:drop-shadow-xl hover:bg-[#F0F0F0]"
+          className="w-fit h-fit cursor-pointer bg-black text-white text-sm font-bold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
         >
           Back
         </Link>

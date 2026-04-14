@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 
 export default function AnnouncementCard({ id, logoSrc, title, date }: { id: string, logoSrc: string, title: string, date: string | Date }) {
 
@@ -44,10 +43,10 @@ export default function AnnouncementCard({ id, logoSrc, title, date }: { id: str
   const formattedTitle = formatText(title);
 
   return (
-    <div className="flex flex-row w-[45%] h-[220px] bg-[#e5e5e5] shadow-sm hover:shadow-md transition-shadow overflow-hidden m-5 font-sukhumvit">
+    <div className="flex flex-row w-full h-full bg-white rounded-xl font-sukhumvit">
 
       {/* Logo */}
-      <div className="w-[40%] relative bg-white flex-shrink-0">
+      <div className="w-[40%] relative flex-shrink-0">
         <Image
           src={logoSrc}
           alt={title}
@@ -74,10 +73,6 @@ export default function AnnouncementCard({ id, logoSrc, title, date }: { id: str
 
           <h2 className="text-[#4a4a4a] text-left text-lg sm:text-xl font-medium leading-snug line-clamp-3" dangerouslySetInnerHTML={{ __html: formattedTitle }}></h2>
         </div>
-
-        <Link key={id} href={`/announcement/${id}`} className="self-end bg-white text-gray-600 px-6 py-2 rounded-full text-sm font-medium shadow-sm hover:bg-gray-50 transition-colors mt-2">
-          Read More
-        </Link>
 
       </div>
     </div>
