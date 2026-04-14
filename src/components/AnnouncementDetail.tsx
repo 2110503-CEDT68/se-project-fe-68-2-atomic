@@ -63,7 +63,7 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
           {/* <h1 className="inline font-bold"></h1><h1 className="inline font-normal">{formattedTitle}</h1> */}
         </div>
 
-        <div className="font-semibold opacity-60">
+        <div className="font-semibold opacity-50">
           <div className="flex flex-row">
             <svg
               className="w-5 h-5 mr-2"
