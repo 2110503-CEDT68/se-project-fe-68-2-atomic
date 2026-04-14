@@ -3,13 +3,36 @@ import Link from "next/link";
 
 export default function AnnouncementCard({ id, logoSrc, title, date }: { id: string, logoSrc: string, title: string, date: string | Date }) {
 
+  const monthMap: Record<string, string> = {
+    '01': 'Jan',
+    '02': 'Feb',
+    '03': 'Mar',
+    '04': 'Apr',
+    '05': 'May',
+    '06': 'Jun',
+    '07': 'Jul',
+    '08': 'Aug',
+    '09': 'Sep',
+    '10': 'Oct',
+    '11': 'Nov',
+    '12': 'Dec'
+  };
+
   const dateObj = new Date(date);
   const day = String(dateObj.getDate()).padStart(2, '0');
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const month = monthMap[String(dateObj.getMonth() + 1).padStart(2, '0')];
   const year = dateObj.getFullYear();
-  const hour = dateObj.getHours();
+  let hour = dateObj.getHours();
+  const period = hour >= 12 ? 'PM' : 'AM';
+  
+  if (hour == 0) {
+    hour = 12
+  } else if (hour > 12) {
+    hour -= 12;
+  }
+
   const minute = dateObj.getMinutes();
-  const formattedDate = `${day}/${month}/${year} ${hour}:${minute}`;
+  const formattedDate = `${day} ${month} ${year} ${hour}.${minute} ${period}`;
 
   const formatText = (text: string) => {
     return text

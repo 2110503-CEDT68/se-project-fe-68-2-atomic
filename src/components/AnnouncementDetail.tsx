@@ -15,9 +15,17 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
   const day = String(dateObj.getDate()).padStart(2, '0');
   const month = String(dateObj.getMonth() + 1).padStart(2, '0');
   const year = dateObj.getFullYear();
-  const hour = dateObj.getHours();
+  let hour = dateObj.getHours();
+  const period = hour >= 12 ? 'PM' : 'AM';
+  
+  if (hour == 0) {
+    hour = 12
+  } else if (hour > 12) {
+    hour -= 12;
+  }
+
   const minute = dateObj.getMinutes();
-  const formattedDate = `${day}/${month}/${year} ${hour}:${minute}`;
+  const formattedDate = `${day} ${month} ${year} ${hour}.${minute} ${period}`;
 
   const formatText = (text: string) => {
     return text
