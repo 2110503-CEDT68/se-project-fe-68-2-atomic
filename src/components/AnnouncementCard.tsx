@@ -31,7 +31,7 @@ export default function AnnouncementCard({ id, logoSrc, title, date }: { id: str
     hour -= 12;
   }
 
-  const minute = dateObj.getMinutes();
+  const minute = String(dateObj.getMinutes()).padStart(2, '0');
   const formattedDate = `${day} ${month} ${year} ${hour}.${minute} ${period}`;
 
   const formatText = (text: string) => {
