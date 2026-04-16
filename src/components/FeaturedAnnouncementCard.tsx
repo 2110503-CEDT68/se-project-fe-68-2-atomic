@@ -38,9 +38,11 @@ export default function FeaturedAnnouncementCard({
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
   return (
-    <div className="relative flex flex-row w-full h-full bg-white rounded-xl font-sukhumvit shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-
-      {/* Left — image fills edge to edge */}
+    <Link
+      href={`/announcement/${id}`}
+      className="relative flex flex-row w-full h-full bg-white rounded-xl font-sukhumvit shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+    >
+      {/* Left — image */}
       <div className="w-[55%] relative flex-shrink-0">
         <Image
           src={logoSrc}
@@ -73,8 +75,7 @@ export default function FeaturedAnnouncementCard({
             dangerouslySetInnerHTML={{ __html: formatText(title) }}
           />
         </div>
-
       </div>
-    </div>
+    </Link>
   );
 }
