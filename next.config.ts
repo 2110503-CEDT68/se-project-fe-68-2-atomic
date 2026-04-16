@@ -2,15 +2,21 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['drive.google.com', 'drive.usercontent.google.com']
+    // เพิ่ม hostname เหล่านี้เข้าไปเพื่อให้ Next.js ยอมรับรูปจาก Google
+    domains: [
+      'drive.google.com', 
+      'drive.usercontent.google.com',
+      'lh3.googleusercontent.com',
+      'lh4.googleusercontent.com',
+      'lh5.googleusercontent.com',
+      'lh6.googleusercontent.com',
+      'googleusercontent.com'
+    ],
   },
-  // เพิ่มส่วนนี้เข้าไปครับ
   async rewrites() {
     return [
       {
-        // เมื่อเราเรียก /api-proxy/... ในเครื่องตัวเอง
         source: '/api-proxy/:path*',
-        // ให้ส่งต่อไปที่ Backend จริงๆ บน Vercel
         destination: 'https://frontend-project-backend.vercel.app/api/:path*',
       },
     ]
