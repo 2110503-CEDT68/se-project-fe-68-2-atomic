@@ -39,7 +39,7 @@ export default function AnnouncementCard({
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
   return (
-    <div className={`relative flex flex-row w-full h-full bg-white rounded-xl font-sukhumvit shadow-sm hover:shadow-md transition-shadow overflow-hidden ${className}`}>
+    <div className={`relative flex flex-row w-full h-full bg-white rounded-xl font-sukhumvit transition-shadow overflow-hidden ${className}`}>
 
       {/* Logo */}
       <div className="w-[40%] relative flex-shrink-0">

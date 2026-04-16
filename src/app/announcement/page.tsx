@@ -28,10 +28,6 @@ export default async function AnnouncementPage({searchParams} : {searchParams: P
     announcements = await getAnnouncements(currentPage);
   }
 
-  const sortedAnnouncement = announcements.data.sort((a:any,b:any)=>
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  )
-
   return(
     <Suspense fallback={<Loading/>}>
       <div className="text-center p-5">
