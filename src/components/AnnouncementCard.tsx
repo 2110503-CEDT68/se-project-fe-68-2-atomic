@@ -8,13 +8,12 @@ const monthMap: Record<string, string> = {
 };
 
 export default function AnnouncementCard({
-  id, logoSrc, title, date, isNew = false, className = ''
+  id, logoSrc, title, date, className = ''
 }: {
   id: string;
   logoSrc: string;
   title: string;
   date: string | Date;
-  isNew?: boolean;
   className?: string;
 }) {
   const dateObj = new Date(date);
@@ -41,13 +40,6 @@ export default function AnnouncementCard({
 
   return (
     <div className={`relative flex flex-row w-full h-full bg-white rounded-xl font-sukhumvit shadow-sm hover:shadow-md transition-shadow overflow-hidden ${className}`}>
-
-      {/* New badge — from HEAD, only renders when isNew=true */}
-      {isNew && (
-        <span className="absolute top-3 left-3 z-10 bg-amber-400 text-amber-900 text-sm font-bold px-3 py-1 rounded">
-          New
-        </span>
-      )}
 
       {/* Logo */}
       <div className="w-[40%] relative flex-shrink-0">

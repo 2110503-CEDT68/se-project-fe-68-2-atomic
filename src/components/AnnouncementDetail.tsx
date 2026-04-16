@@ -125,7 +125,7 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
         <Link
           key={announcementData._id}
           href={'/announcement'}
-          className="w-fit h-fit cursor-pointer bg-black text-white font-bold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
+          className="w-fit h-fit cursor-pointer bg-black text-white font-extrabold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
         >
           Back
         </Link>

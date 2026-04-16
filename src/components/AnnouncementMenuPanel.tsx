@@ -56,12 +56,10 @@ export default function HomeAnnouncementSection({ announcementData }: { announce
         <div className="flex justify-center mt-8">
           <Link
             href="/announcement"
-            className="group inline-flex items-center gap-2 bg-white border border-gray-300 text-gray-600 text-sm font-medium px-8 py-3 rounded-full shadow-sm hover:bg-gray-50 hover:border-gray-400 hover:text-gray-800 transition-all duration-200"
+            className="cursor-pointer bg-black text-white text-xl font-bold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
           >
             View all announcements
-            <svg className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-            </svg>
+            
           </Link>
         </div>
 
