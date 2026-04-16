@@ -11,11 +11,36 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
 
   const announcementData: AnnouncementItem = announcementJsonReady.data;
 
+  const monthMap: Record<string, string> = {
+    '01': 'Jan',
+    '02': 'Feb',
+    '03': 'Mar',
+    '04': 'Apr',
+    '05': 'May',
+    '06': 'Jun',
+    '07': 'Jul',
+    '08': 'Aug',
+    '09': 'Sep',
+    '10': 'Oct',
+    '11': 'Nov',
+    '12': 'Dec'
+  };
+
   const dateObj = new Date(announcementData.createdAt);
   const day = String(dateObj.getDate()).padStart(2, '0');
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const month = monthMap[String(dateObj.getMonth() + 1).padStart(2, '0')];
   const year = dateObj.getFullYear();
-  const formattedDate = `${day}/${month}/${year}`;
+  let hour = dateObj.getHours();
+  const period = hour >= 12 ? 'PM' : 'AM';
+  
+  if (hour == 0) {
+    hour = 12
+  } else if (hour > 12) {
+    hour -= 12;
+  }
+
+  const minute = String(dateObj.getMinutes()).padStart(2, '0');
+  const formattedDate = `${day} ${month} ${year} ${hour}:${minute} ${period}`;
 
   const formatText = (text: string) => {
     return text
@@ -34,11 +59,11 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
       {/* Header */}
       <div>
         <div className="text-3xl my-2">
-          <h1 className="inline font-normal" dangerouslySetInnerHTML={{ __html: formattedTitle }} />
+          <h1 className="inline font-bold" dangerouslySetInnerHTML={{ __html: formattedTitle }} />
           {/* <h1 className="inline font-bold"></h1><h1 className="inline font-normal">{formattedTitle}</h1> */}
         </div>
 
-        <div className="font-semibold opacity-70">
+        <div className="font-semibold opacity-50">
           <div className="flex flex-row">
             <svg
               className="w-5 h-5 mr-2"
@@ -100,7 +125,7 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
         <Link
           key={announcementData._id}
           href={'/announcement'}
-          className="py-2 pl-2 pr-10 bg-[#F3F3F3] text-[#676767] drop-shadow-lg hover:drop-shadow-xl hover:bg-[#F0F0F0]"
+          className="w-fit h-fit cursor-pointer bg-black text-white font-bold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
         >
           Back
         </Link>

@@ -1,13 +1,37 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function AnnouncementCard({id, logoSrc, title, date, isNew = false, className = ''}: 
-  {id: string;logoSrc: string;title: string;date: string | Date;isNew?: boolean;className?: string;}) {
+const monthMap: Record<string, string> = {
+  '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
+  '05': 'May', '06': 'Jun', '07': 'Jul', '08': 'Aug',
+  '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'
+};
+
+export default function AnnouncementCard({
+  id, logoSrc, title, date, isNew = false, className = ''
+}: {
+  id: string;
+  logoSrc: string;
+  title: string;
+  date: string | Date;
+  isNew?: boolean;
+  className?: string;
+}) {
   const dateObj = new Date(date);
   const day = String(dateObj.getDate()).padStart(2, '0');
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const month = monthMap[String(dateObj.getMonth() + 1).padStart(2, '0')];
   const year = dateObj.getFullYear();
-  const formattedDate = `${day}/${month}/${year}`;
+  let hour = dateObj.getHours();
+  const period = hour >= 12 ? 'PM' : 'AM';
+
+  if (hour === 0) {
+    hour = 12;
+  } else if (hour > 12) {
+    hour -= 12;
+  }
+
+  const minute = String(dateObj.getMinutes()).padStart(2, '0');
+  const formattedDate = `${day} ${month} ${year} ${hour}:${minute} ${period}`;
 
   const formatText = (text: string) =>
     text
@@ -15,17 +39,18 @@ export default function AnnouncementCard({id, logoSrc, title, date, isNew = fals
       .replace(/\\t/g, '<span class="ml-8 inline-block"></span>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-  const formattedTitle = formatText(title);
-
   return (
-    <div className={`relative flex flex-row w-[45%] h-[220px] bg-[#e5e5e5] shadow-sm hover:shadow-md transition-shadow overflow-hidden m-5 font-sukhumvit ${className}`}>
+    <div className={`relative flex flex-row w-full h-full bg-white rounded-xl font-sukhumvit shadow-sm hover:shadow-md transition-shadow overflow-hidden ${className}`}>
+
+      {/* New badge — from HEAD, only renders when isNew=true */}
       {isNew && (
         <span className="absolute top-3 left-3 z-10 bg-amber-400 text-amber-900 text-sm font-bold px-3 py-1 rounded">
           New
         </span>
       )}
 
-      <div className="w-[40%] relative bg-white flex-shrink-0">
+      {/* Logo */}
+      <div className="w-[40%] relative flex-shrink-0">
         <Image
           src={logoSrc}
           alt={title}
@@ -34,6 +59,7 @@ export default function AnnouncementCard({id, logoSrc, title, date, isNew = fals
         />
       </div>
 
+      {/* Description */}
       <div className="w-[60%] p-5 flex flex-col justify-between">
         <div>
           <div className="flex items-center text-gray-500 font-bold mb-2 text-sm sm:text-base">
@@ -44,16 +70,9 @@ export default function AnnouncementCard({id, logoSrc, title, date, isNew = fals
           </div>
           <h2
             className="text-[#4a4a4a] text-left text-lg sm:text-xl font-medium leading-snug line-clamp-3"
-            dangerouslySetInnerHTML={{ __html: formattedTitle }}
+            dangerouslySetInnerHTML={{ __html: formatText(title) }}
           />
         </div>
-
-        <Link
-          href={`/announcement/${id}`}
-          className="self-end bg-white text-gray-600 px-6 py-2 rounded-full text-sm font-medium shadow-sm hover:bg-gray-50 transition-colors mt-2"
-        >
-          Read More
-        </Link>
       </div>
     </div>
   );
