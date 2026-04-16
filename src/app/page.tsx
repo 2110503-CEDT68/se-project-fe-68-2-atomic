@@ -17,8 +17,8 @@ export default async function Home() {
     <main>
       <Suspense fallback={<Loading/>}>
         <Banner/>
-        <DentistPanel dentistJsonReady={dentists}/>
         <AnnouncementMenuPanel  announcementData={announcements.data}/>
+        <DentistPanel dentistJsonReady={dentists}/>
         <FeedbackPanel/>
       </Suspense>
     </main>
