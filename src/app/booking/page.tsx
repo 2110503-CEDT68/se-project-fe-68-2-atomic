@@ -15,7 +15,12 @@ export default async function BookingPage() {
 
   return (
     <div className={`min-h-[calc(100vh-64px)] ${isAdmin ? 'bg-[#838383]' : 'bg-gradient-to-b from-[#B7FFFB] to-[#FFFFFF]'} flex flex-col`}>
-      <BookingPanel dentistJsonReady={dentists} bookingJsonReady={bookings} token={session!.user.token} isAdmin={isAdmin} />
+      <BookingPanel 
+        dentistJsonReady={dentists} 
+        bookingJsonReady={bookings} 
+        token={session!.user.token} 
+        isAdmin={isAdmin} 
+      />
     </div>
   )
 }
