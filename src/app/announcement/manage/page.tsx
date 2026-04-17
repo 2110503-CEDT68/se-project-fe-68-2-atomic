@@ -9,21 +9,23 @@ export default async function ManageAnnouncementPage({searchParams}: {searchPara
     
     // Safety Check: ถ้าไม่ใช่ Admin ห้ามเข้าหน้านี้เด็ดขาด
     if (!session || session.user.role !== 'admin') {
-        redirect('/announcements');
+        redirect('/announcement'); // แก้จาก /announcements เป็น /announcement
     }
 
     const { page } = await searchParams;
-    const announcements = await getAnnouncements(Number(page) || 1);
+    const currentPage = Number(page) || 1;
+
+    // 📌 สำคัญที่สุด: สั่งดึงหน้า 1 และขอ Limit 1000 เพื่อเอาข้อมูลทั้งหมดมาให้หน้าเว็บจัดการต่อ
+    const announcements = await getAnnouncements(1, 1000);
 
     return (
-        <div className="p-10">
-            {/* ส่ง prop พิเศษไปเพื่อบอกให้แสดงผลแบบ Table Dashboard */}
+        <div className="w-full">
             <AnnouncementPanel 
                 announcementData={announcements.data} 
-                totalPage={Math.ceil(announcements.pagination.total / 10)} 
-                currentPage={Number(page) || 1} 
+                totalPage={1} // ปล่อยเป็น 1 ไปเลย เพราะ AnnouncementPanel จะคำนวณจำนวนหน้าจริงๆ ให้เอง
+                currentPage={currentPage} 
                 isAdmin={true} 
-                isDashboard={true} // เพิ่ม prop นี้
+                isDashboard={true} 
             />
         </div>
     );
