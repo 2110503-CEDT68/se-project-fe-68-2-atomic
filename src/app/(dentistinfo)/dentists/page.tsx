@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
-export default async function Dentsits(){
+export default async function Dentists(){
     const dentists = await getDentists()
 
     const session = await getServerSession(authOptions)

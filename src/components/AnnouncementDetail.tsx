@@ -3,13 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: { announcementJsonReady: AnnouncementJsonSingle, isAdmin: boolean }) {
+// 📌 ฟังก์ชันดั้งเดิมของคุณ สำหรับแปลงลิงก์ Drive
+const transformDriveLink = (url: string) => {
+  if (!url) return '';
+  if (url.includes('drive.google.com')) {
+    const fileId = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0];
+    return `https://lh3.googleusercontent.com/d/${fileId}`; 
+  }
+  return url;
+};
 
-  if (!announcementJsonReady.data) {
+export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: { announcementJsonReady: any, isAdmin: boolean }) {
+
+  if (!announcementJsonReady || !announcementJsonReady.data) {
     return <div className="p-10 font-bold text-3xl text-center">ไม่พบข้อมูลประกาศ</div>;
   }
 
-  const announcementData: AnnouncementItem = announcementJsonReady.data;
+  const announcementData: any = announcementJsonReady.data;
 
   const monthMap: Record<string, string> = {
     '01': 'Jan',
@@ -50,21 +60,32 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
   }
 
   const formattedTitle = formatText(announcementData.title)
-
   const formattedDescription = formatText(announcementData.description)
 
   return (
     <main className="max-w-6xl mx-auto px-8 w-full m-10 font-sukhumvit">
 
+      {/* ✨ Back Button (ย้ายมาไว้บนสุด + ดีไซน์มินิมอล) */}
+      <div className="mb-8">
+        <Link 
+          href="/announcement" 
+          className="inline-flex items-center text-gray-500 hover:text-black font-bold text-lg transition-colors group"
+        >
+          <svg className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back
+        </Link>
+      </div>
+
       {/* Header */}
       <div>
         <div className="text-3xl my-2">
           <h1 className="inline font-bold" dangerouslySetInnerHTML={{ __html: formattedTitle }} />
-          {/* <h1 className="inline font-bold"></h1><h1 className="inline font-normal">{formattedTitle}</h1> */}
         </div>
 
         <div className="font-semibold opacity-50">
-          <div className="flex flex-row">
+          <div className="flex flex-row items-center">
             <svg
               className="w-5 h-5 mr-2"
               fill="none"
@@ -77,13 +98,14 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
             <h1 className="inline">Date: {formattedDate}</h1>
             {
               announcementData.isEdited ?
-                <h1 className="inline"> (Edited)</h1>
+                // 📌 เติมช่องว่างข้างหน้า (Edited) และปรับสีให้เด่นขึ้น
+                <span className="inline text-amber-600 font-bold ml-1"> (Edited)</span> 
                 :
                 null
             }
           </div>
 
-          <div className="flex flex-row items-center"> {/* เพิ่ม items-center ให้ไอคอนกับข้อความตรงกัน */}
+          <div className="flex flex-row items-center mt-1">
             <svg
               className="w-5 h-5 mr-2"
               fill="currentColor"
@@ -101,34 +123,21 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin }: {
       {/* Banner */}
       <div className="relative w-full aspect-[3/4] md:aspect-video overflow-hidden my-8">
         <Image
-          src={announcementData.bannerURL}
+          src={transformDriveLink(announcementData.bannerURL)}
           alt={announcementData.title}
           fill
           priority
           className="object-contain p-4"
+          unoptimized={true}
         />
       </div>
 
       {/* Description */}
       <div className="text-center space-y-2 text-gray-700 leading-relaxed">
-        {/* <p className="text-lg font-medium text-left">
-          {formattedDescription}
-        </p> */}
         <p 
           className="text-lg font-medium text-left" 
           dangerouslySetInnerHTML={{ __html: formattedDescription }} 
         />
-      </div>
-
-      {/* Back Button */}
-      <div className="my-15">
-        <Link
-          key={announcementData._id}
-          href={'/announcement'}
-          className="w-fit h-fit cursor-pointer bg-black text-white font-extrabold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
-        >
-          Back
-        </Link>
       </div>
 
     </main>
