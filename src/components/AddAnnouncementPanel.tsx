@@ -132,123 +132,6 @@ export default function AddAnnouncementPanel({ token }: { token: any }) {
             </div>
         );
     }
-<<<<<<< Updated upstream
-   
-    setIsLoading(true);
-    setError(null);
-    setSuccess(false);
-
-    try {
-      await addAnnouncement(
-        formData.title,
-        formData.description,
-        formData.logoURL,
-        formData.bannerURL,
-        token
-      );
-
-      setIsLoading(false);
-      setSuccess(true);
-
-      router.push('/announcement');
-      router.refresh();
-
-    } catch (err: any) {
-      setIsLoading(false);
-      setError('Failed to add announcement. Please try again.');
-    }
-  };
-
-  return (
-    <div>
-      <main className="flex-grow flex justify-center items-center p-6">
-        <div className="bg-white w-full max-w-2xl p-12 rounded-[2rem] shadow-xl min-h-[400px] flex flex-col justify-center">
-
-          {isLoading ? (
-            <div className="flex flex-col items-center justify-center gap-4 animate-fade-in py-20">
-              <CircularProgress />
-              <p className="text-2xl font-bold text-black">Adding Announcement...</p>
-            </div>
-          ) : success ? (
-            <div className="flex flex-col items-center justify-center gap-4 animate-fade-in py-20">
-              <p className="text-3xl font-bold text-green-600 text-center">Created Announcement Successfully!</p>
-            </div>
-          ) : (
-            <div className="animate-fade-in">
-              <h1 className="text-4xl font-extrabold text-center mb-12 text-black">
-                Add New Announcement
-              </h1>
-
-              {error && (
-                <p className="text-center text-red-600 font-medium mb-4">{error}</p>
-              )}
-
-              <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-
-                <TextField
-                  label="Title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  multiline
-                  rows={2}
-                  variant="outlined"
-                  slotProps={{
-                    htmlInput: {
-                      maxLength: 100
-                    }
-                  }}
-                />
-
-                <TextField
-                  label="Description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  multiline
-                  rows={10} // ให้ช่อง Description ใหญ่ขึ้นหน่อย
-                  variant="outlined"
-                />
-
-                <TextField
-                  label="Logo Image ID (NOT URL)"
-                  name="logoURL"
-                  value={formData.logoURL}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  variant="outlined"
-                />
-
-                <TextField
-                  label="Banner Image ID (NOT URL)"
-                  name="bannerURL"
-                  value={formData.bannerURL}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  variant="outlined"
-                />
-
-                <div className="flex flex-row gap-4 justify-center pt-2">
-                  <button
-                    type="button"
-                    onClick={() => router.push('/announcement')}
-                    className="cursor-pointer bg-black text-white text-xl font-bold py-3 px-10 rounded-full hover:bg-gray-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-95"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="cursor-pointer bg-blue-500 text-white text-xl font-bold py-3 px-10 rounded-full hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-95"
-                  >
-                    Confirm
-                  </button>
-=======
 
     return (
         <div className="!w-full !min-h-screen flex flex-col pt-12 pb-20 px-4 sm:px-8 font-sukhumvit bg-slate-50 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:16px_16px]">
@@ -266,7 +149,6 @@ export default function AddAnnouncementPanel({ token }: { token: any }) {
                         </svg>
                         {step === 1 ? 'Cancel' : 'Back to Edit'}
                     </button>
->>>>>>> Stashed changes
                 </div>
 
                 {error && (

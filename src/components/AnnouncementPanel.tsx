@@ -2,14 +2,8 @@
 import { useState, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import AnnouncementCard from './AnnouncementCard';
-<<<<<<< Updated upstream
-import { Pagination } from '@mui/material';
-import deleteAnnouncement from '@/libs/deleteAnnoucement';
-import {CircularProgress} from '@mui/material';
-=======
 import { Pagination, CircularProgress } from '@mui/material';
 import Link from 'next/link';
->>>>>>> Stashed changes
 
 const monthMap: Record<string, string> = {
   '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
@@ -39,13 +33,8 @@ export default function AnnouncementPanel({
   announcementData: any[],
   isAdmin?: boolean,
   showSearch?: boolean,
-<<<<<<< Updated upstream
-  isDashboard?: boolean
-  token: string
-=======
   isDashboard?: boolean,
   token?: string
->>>>>>> Stashed changes
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -54,12 +43,7 @@ export default function AnnouncementPanel({
   const [filterTitle, setFilterTitle] = useState('');
   const [filterAuthor, setFilterAuthor] = useState('');
   const [filterState, setFilterState] = useState('All');
-<<<<<<< Updated upstream
-  const [ isDeleting,setIsDeleting] = useState(false);
-  
-=======
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
->>>>>>> Stashed changes
 
   const ITEMS_PER_PAGE = 10; 
 
@@ -91,20 +75,6 @@ export default function AnnouncementPanel({
     params.set('page', '1');
     router.push(`${pathname}?${params}`);
   };
-<<<<<<< Updated upstream
- const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this announcement?")) {
-      setIsDeleting(true);
-      try {
-        await deleteAnnouncement(id, token);
-        window.location.reload();
-      } catch (error) {
-        setIsDeleting(false);
-        alert("Failed to delete announcement.");
-      }
-    }
-  };
-=======
 
   const handleDelete = async (id: string, title: string) => {
     const cleanTitle = title.replace(/\\n/g, ' ');
@@ -129,7 +99,6 @@ export default function AnnouncementPanel({
     }
   };
 
->>>>>>> Stashed changes
   const filteredAnnouncement = useMemo(() => {
     return announcementData.filter((announcement: any) => {
       const titleMatch = announcement.title.toLowerCase().includes(filterTitle.toLowerCase());
@@ -273,84 +242,6 @@ export default function AnnouncementPanel({
         )}
 
         {/* --- Content Section --- */}
-<<<<<<< Updated upstream
-         {isDeleting ? (
-                            <div className="flex flex-col items-center justify-center gap-4 animate-fade-in py-32">
-                                <CircularProgress/>
-                                <p className="text-2xl font-bold text-black">Deleting Dentist...</p>
-                            </div>):
-        isDashboard ? (
-          <div className="w-full bg-white border border-slate-200 rounded-2xl shadow-sm overflow-x-auto">
-            <table className="w-full border-collapse min-w-[800px]">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-left">
-                  <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-2/5">Announcement</th>
-                  <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Author</th>
-                  <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
-                  <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Date Created</th>
-                  <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {paginatedData.map((item: any) => (
-                  <tr key={item._id} onClick={() => router.push(`/announcement/${item._id}`)} className="hover:bg-slate-50 transition-colors cursor-pointer group">
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-white flex-shrink-0 flex items-center justify-center border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                          {item.logoURL ? <img src={transformDriveLink(item.logoURL)} alt="announcement" className="w-full h-full object-contain p-1 group-hover:scale-110 transition-transform duration-300" referrerPolicy="no-referrer" /> : <span className="text-[10px] text-slate-400 font-medium uppercase">No Img</span>}
-                        </div>
-                        <span 
-                          className="text-base font-semibold leading-snug text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-2"
-                          dangerouslySetInnerHTML={{ __html: formatText(item.title) }}
-                        />
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-center text-sm font-medium text-slate-600">
-                      {typeof item.author === 'object' ? item.author.name : (item.author || 'admin')}
-                    </td>
-                    
-                    <td className="py-4 px-6 text-center">
-                      {item.isEdited ? (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-600 border border-amber-200">
-                          Edited
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200">
-                          Original
-                        </span>
-                      )}
-                    </td>
-                    
-                    <td className="py-4 px-6 text-center text-sm text-slate-600 font-medium">
-                      {formatDateString(item.createdAt)}
-                    </td>
-                    <td className="py-4 px-6">
-                      <div className="flex gap-2 justify-end">
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); router.push(`/announcement/edit/${item._id}`); }} 
-                          className="bg-white border border-slate-300 text-slate-700 px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-slate-100 hover:text-slate-900 transition-all active:scale-95 shadow-sm"
-                        >
-                          Edit
-                        </button>
-                        <button 
-                           disabled={isDeleting}
-                          onClick={(e)=> {e.stopPropagation(); handleDelete(item._id)}} 
-                          className="bg-red-50 border border-red-100 text-red-600 px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-red-600 hover:text-white transition-all active:scale-95 shadow-sm"
-                        >
-                          {isDeleting ? '...' : 'Delete'}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {paginatedData.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="py-12 text-center text-slate-500 font-medium text-lg">No announcements found matching your criteria.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-=======
         {isDashboard ? (
           <div className="w-full bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
@@ -435,7 +326,6 @@ export default function AnnouncementPanel({
                 </div>
               )}
             </div>
->>>>>>> Stashed changes
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
