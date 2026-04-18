@@ -42,7 +42,7 @@ export default function AnnouncementPanel({
 
   const [filterTitle, setFilterTitle] = useState('');
   const [filterAuthor, setFilterAuthor] = useState('');
-  const [filterState, setFilterState] = useState('Edited/NotEdited');
+  const [filterState, setFilterState] = useState('All');
 
   const ITEMS_PER_PAGE = 10; 
 
@@ -87,8 +87,15 @@ export default function AnnouncementPanel({
       const authorObj = announcement.author;
       const authorName = typeof authorObj === 'object' ? (authorObj?.name || '') : (authorObj || 'admin');
       const authorMatch = authorName.toLowerCase().includes(filterAuthor.toLowerCase());
-      const stateValue = announcement.state || 'Not edited';
-      const stateMatch = filterState === 'Edited/NotEdited' || stateValue === filterState;
+      
+      // 📌 แก้ไข Logic การกรองให้เช็คจาก Field 'isEdited' ที่เป็น Boolean
+      let stateMatch = true;
+      if (filterState === 'Edited') {
+        stateMatch = announcement.isEdited === true;
+      } else if (filterState === 'Not edited') {
+        stateMatch = announcement.isEdited === false || announcement.isEdited === undefined;
+      }
+      
       return titleMatch && authorMatch && stateMatch;
     });
   }, [filterTitle, filterAuthor, filterState, announcementData]);
@@ -107,12 +114,12 @@ export default function AnnouncementPanel({
   };
 
   return (
-    <section className={`min-h-screen ${isAdmin ? 'bg-[#838383]' : 'bg-gradient-to-b from-[#B7FFFB] to-[#FFFFFF]'} flex flex-col pt-8 pb-16 px-8`}>
+    <section className={`min-h-screen ${isDashboard ? 'bg-[#838383]' : 'bg-white'} flex flex-col pt-8 pb-16 px-8`}>
       <div className="max-w-7xl mx-auto flex flex-col items-center w-full">
         
         {/* --- Header Section --- */}
         <div className="w-full flex flex-col items-center mb-8 text-center">
-          <h2 className={`text-4xl font-bold mb-6 ${isAdmin ? 'text-white' : 'text-black'}`}>Clinic Announcement</h2>
+          <h2 className={`text-4xl font-bold mb-6 ${isDashboard ? 'text-white' : 'text-black'}`}>Clinic Announcement</h2>
           <div className="flex justify-center w-full mb-8">
             {isDashboard ? (
               <button onClick={() => router.push('/announcement/add')} className="bg-black text-white py-2 px-10 rounded-full text-lg font-medium hover:bg-gray-800 transition shadow-md active:scale-95">
@@ -128,22 +135,20 @@ export default function AnnouncementPanel({
 
         {/* --- Filter Bar (Dashboard) --- */}
         {isDashboard && (
-          <div className={`w-full flex flex-wrap justify-center items-center gap-x-6 gap-y-4 mb-10 ${isAdmin ? 'text-white' : 'text-black'}`}>
+          <div className="w-full flex flex-wrap justify-center items-center gap-x-6 gap-y-4 mb-10 text-white">
             <div className="flex items-center gap-2">
               <span className="font-medium whitespace-nowrap">Title/ID :</span>
-              {/* 📌 2. เติม bg-white ให้ช่องค้นหา */}
               <input type="text" className="bg-white border border-gray-300 rounded-full px-4 py-1 w-64 outline-none text-black focus:ring-2 focus:ring-blue-400" value={filterTitle} onChange={(e) => handleFilterChange(setFilterTitle, e.target.value)} />
             </div>
             <div className="flex items-center gap-2">
               <span className="font-medium whitespace-nowrap">Author :</span>
-              {/* 📌 เติม bg-white */}
               <input type="text" className="bg-white border border-gray-300 rounded-full px-4 py-1 w-48 outline-none text-black focus:ring-2 focus:ring-blue-400" value={filterAuthor} onChange={(e) => handleFilterChange(setFilterAuthor, e.target.value)} />
             </div>
             <div className="flex items-center gap-2">
               <span className="font-medium whitespace-nowrap">State :</span>
-              {/* 📌 เติม bg-white */}
               <select className="bg-white border border-gray-300 rounded-full px-4 py-1 w-48 text-black outline-none cursor-pointer focus:ring-2 focus:ring-blue-400" value={filterState} onChange={(e) => handleFilterChange(setFilterState, e.target.value)}>
-                <option value="Edited/NotEdited">Edited/NotEdited</option>
+                {/* 📌 เปลี่ยนค่า Option ใน Dropdown */}
+                <option value="All">All</option>
                 <option value="Edited">Edited</option>
                 <option value="Not edited">Not edited</option>
               </select>
@@ -154,7 +159,6 @@ export default function AnnouncementPanel({
         {/* --- Search Bar (Guest) --- */}
         {!isDashboard && showSearch && (
           <div className="relative w-full max-w-[500px] mx-auto mb-10">
-            {/* 📌 3. เติม bg-white ให้ช่องค้นหาของหน้าปกติ */}
             <input type="text" placeholder="Search Announcement" className="w-full bg-white p-3 pl-10 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:border-blue-500 text-gray-800" value={filterTitle} onChange={(e) => handleFilterChange(setFilterTitle, e.target.value)} />
             <span className="absolute left-4 top-3.5 text-gray-400">🔍</span>
           </div>
@@ -188,7 +192,16 @@ export default function AnnouncementPanel({
                       </div>
                     </td>
                     <td className="text-center text-sm text-gray-600">{typeof item.author === 'object' ? item.author.name : (item.author || 'admin')}</td>
-                    <td className="text-center text-sm text-gray-600">{item.state || 'Not edited'}</td>
+                    
+                    {/* 📌 แก้ไขส่วนการแสดงผล State ในตารางให้อ่านค่าจาก isEdited (Boolean) */}
+                    <td className="text-center text-sm text-gray-600">
+                      {item.isEdited ? (
+                        <span className="text-amber-600 font-medium">Edited</span>
+                      ) : (
+                        <span className="text-gray-500">Not edited</span>
+                      )}
+                    </td>
+                    
                     <td className="text-center text-sm text-gray-600 font-medium">
                       {formatDateString(item.createdAt)}
                     </td>
@@ -213,7 +226,7 @@ export default function AnnouncementPanel({
           </div>
         )}
 
-        <div className={`flex justify-center mt-20 p-2 px-4 rounded-full ${isAdmin ? 'bg-white/90 backdrop-blur-sm' : ''}`}>
+        <div className={`flex justify-center mt-20 p-2 px-4 rounded-full ${isDashboard ? 'bg-white/90 backdrop-blur-sm shadow-md' : ''}`}>
           <Pagination count={calculatedTotalPage} color="primary" page={currentPage} onChange={handleChangePage} size="large" />
         </div>
       </div>
