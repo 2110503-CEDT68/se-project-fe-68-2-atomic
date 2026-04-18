@@ -4,6 +4,7 @@ import { CircularProgress, TextField } from '@mui/material';
 import { useState } from 'react';
 import addAnnouncement from '@/libs/addAnnouncement'; 
 import { useRouter } from 'next/navigation';
+import { kMaxLength } from 'buffer';
 
 export default function AddAnnouncementPanel({ token }: { token: any }) {
   const router = useRouter();
@@ -96,6 +97,11 @@ export default function AddAnnouncementPanel({ token }: { token: any }) {
                   multiline
                   rows={2}
                   variant="outlined"
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: 100
+                    }
+                  }}
                 />
 
                 <TextField
