@@ -26,6 +26,7 @@ export default async function ManageAnnouncementPage({searchParams}: {searchPara
                 currentPage={currentPage} 
                 isAdmin={true} 
                 isDashboard={true} 
+                token={session.user.token}
             />
         </div>
     );

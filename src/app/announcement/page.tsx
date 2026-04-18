@@ -27,6 +27,7 @@ export default async function AnnouncementPage({searchParams} : {searchParams: P
           announcementData={announcements.data} 
           isAdmin={isAdmin} 
           showSearch={true}
+          token={session.user.token}
         />
       </div>
     </Suspense>
