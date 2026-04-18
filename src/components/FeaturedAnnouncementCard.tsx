@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link"; // 📌 นำเข้า Link สำหรับปุ่ม Read more
 
 const monthMap: Record<string, string> = {
   '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
@@ -72,6 +73,18 @@ export default function FeaturedAnnouncementCard({
             dangerouslySetInnerHTML={{ __html: formatText(title) }}
           />
         </div>
+
+        {/* ✨ เพิ่มปุ่ม Read more ตรงส่วนท้ายของคอลัมน์ */}
+        <Link 
+          href={`/announcement/${id}`}
+          className="mt-auto pt-4 flex items-center text-blue-600 font-bold text-sm w-fit hover:text-blue-800 transition-colors"
+        >
+          Read more
+          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+
       </div>
     </div>
   );
