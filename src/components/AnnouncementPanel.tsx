@@ -3,6 +3,8 @@ import { useState, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import AnnouncementCard from './AnnouncementCard';
 import { Pagination } from '@mui/material';
+import deleteAnnouncement from '@/libs/deleteAnnoucement';
+import {CircularProgress} from '@mui/material';
 
 // Map เดือนสำหรับจัด Format วันที่
 const monthMap: Record<string, string> = {
@@ -26,7 +28,8 @@ export default function AnnouncementPanel({
   announcementData = [],
   isAdmin = false,
   showSearch = false,
-  isDashboard = false
+  isDashboard = false,
+  token
 }: {
   totalPage: number,
   currentPage: number,
@@ -34,6 +37,7 @@ export default function AnnouncementPanel({
   isAdmin?: boolean,
   showSearch?: boolean,
   isDashboard?: boolean
+  token: string
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -42,6 +46,8 @@ export default function AnnouncementPanel({
   const [filterTitle, setFilterTitle] = useState('');
   const [filterAuthor, setFilterAuthor] = useState('');
   const [filterState, setFilterState] = useState('All');
+  const [ isDeleting,setIsDeleting] = useState(false);
+  
 
   const ITEMS_PER_PAGE = 10; 
 
@@ -79,7 +85,18 @@ export default function AnnouncementPanel({
     params.set('page', '1');
     router.push(`${pathname}?${params}`);
   };
-
+ const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this announcement?")) {
+      setIsDeleting(true);
+      try {
+        await deleteAnnouncement(id, token);
+        window.location.reload();
+      } catch (error) {
+        setIsDeleting(false);
+        alert("Failed to delete announcement.");
+      }
+    }
+  };
   const filteredAnnouncement = useMemo(() => {
     return announcementData.filter((announcement: any) => {
       const titleMatch = announcement.title.toLowerCase().includes(filterTitle.toLowerCase());
@@ -110,6 +127,7 @@ export default function AnnouncementPanel({
     params.set('page', value.toString());
     router.push(`${pathname}?${params}`);
   };
+   
 
   return (
     <section className={`!w-full !min-h-screen flex flex-col pt-12 pb-20 px-4 sm:px-8 font-sukhumvit ${
@@ -207,7 +225,12 @@ export default function AnnouncementPanel({
         )}
 
         {/* --- Content Section --- */}
-        {isDashboard ? (
+         {isDeleting ? (
+                            <div className="flex flex-col items-center justify-center gap-4 animate-fade-in py-32">
+                                <CircularProgress/>
+                                <p className="text-2xl font-bold text-black">Deleting Dentist...</p>
+                            </div>):
+        isDashboard ? (
           <div className="w-full bg-white border border-slate-200 rounded-2xl shadow-sm overflow-x-auto">
             <table className="w-full border-collapse min-w-[800px]">
               <thead>
@@ -261,10 +284,11 @@ export default function AnnouncementPanel({
                           Edit
                         </button>
                         <button 
-                          onClick={(e) => { e.stopPropagation(); }} 
+                           disabled={isDeleting}
+                          onClick={(e)=> {e.stopPropagation(); handleDelete(item._id)}} 
                           className="bg-red-50 border border-red-100 text-red-600 px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-red-600 hover:text-white transition-all active:scale-95 shadow-sm"
                         >
-                          Delete
+                          {isDeleting ? '...' : 'Delete'}
                         </button>
                       </div>
                     </td>
