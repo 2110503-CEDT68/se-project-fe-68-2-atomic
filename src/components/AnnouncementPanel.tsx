@@ -2,18 +2,21 @@
 import { useState, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import AnnouncementCard from './AnnouncementCard';
+<<<<<<< Updated upstream
 import { Pagination } from '@mui/material';
 import deleteAnnouncement from '@/libs/deleteAnnoucement';
 import {CircularProgress} from '@mui/material';
+=======
+import { Pagination, CircularProgress } from '@mui/material';
+import Link from 'next/link';
+>>>>>>> Stashed changes
 
-// Map เดือนสำหรับจัด Format วันที่
 const monthMap: Record<string, string> = {
   '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
   '05': 'May', '06': 'Jun', '07': 'Jul', '08': 'Aug',
   '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'
 };
 
-// 📌 ฟังก์ชันจัด Format ข้อความ
 const formatText = (text: string) => {
   if (!text) return '';
   return text
@@ -36,8 +39,13 @@ export default function AnnouncementPanel({
   announcementData: any[],
   isAdmin?: boolean,
   showSearch?: boolean,
+<<<<<<< Updated upstream
   isDashboard?: boolean
   token: string
+=======
+  isDashboard?: boolean,
+  token?: string
+>>>>>>> Stashed changes
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -46,8 +54,12 @@ export default function AnnouncementPanel({
   const [filterTitle, setFilterTitle] = useState('');
   const [filterAuthor, setFilterAuthor] = useState('');
   const [filterState, setFilterState] = useState('All');
+<<<<<<< Updated upstream
   const [ isDeleting,setIsDeleting] = useState(false);
   
+=======
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+>>>>>>> Stashed changes
 
   const ITEMS_PER_PAGE = 10; 
 
@@ -68,13 +80,7 @@ export default function AnnouncementPanel({
     const year = dateObj.getFullYear();
     let hour = dateObj.getHours();
     const period = hour >= 12 ? 'PM' : 'AM';
-
-    if (hour === 0) {
-      hour = 12;
-    } else if (hour > 12) {
-      hour -= 12;
-    }
-
+    if (hour === 0) hour = 12; else if (hour > 12) hour -= 12;
     const minute = String(dateObj.getMinutes()).padStart(2, '0');
     return `${day} ${month} ${year} ${hour}:${minute} ${period}`;
   };
@@ -85,6 +91,7 @@ export default function AnnouncementPanel({
     params.set('page', '1');
     router.push(`${pathname}?${params}`);
   };
+<<<<<<< Updated upstream
  const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this announcement?")) {
       setIsDeleting(true);
@@ -97,6 +104,32 @@ export default function AnnouncementPanel({
       }
     }
   };
+=======
+
+  const handleDelete = async (id: string, title: string) => {
+    const cleanTitle = title.replace(/\\n/g, ' ');
+    if (!window.confirm(`Are you sure you want to delete "${cleanTitle}"?`)) return;
+    
+    setIsDeleting(id);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/announcements/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        router.refresh();
+      } else {
+        alert("Failed to delete announcement");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("An error occurred while deleting");
+    } finally {
+      setIsDeleting(null);
+    }
+  };
+
+>>>>>>> Stashed changes
   const filteredAnnouncement = useMemo(() => {
     return announcementData.filter((announcement: any) => {
       const titleMatch = announcement.title.toLowerCase().includes(filterTitle.toLowerCase());
@@ -126,6 +159,7 @@ export default function AnnouncementPanel({
     const params = new URLSearchParams(searchParams);
     params.set('page', value.toString());
     router.push(`${pathname}?${params}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
    
 
@@ -145,26 +179,25 @@ export default function AnnouncementPanel({
           </h2>
           <p className="text-slate-500 text-lg mb-8 max-w-2xl font-medium">
             {isDashboard 
-              ? 'Organize and update the information shared with your patients.' 
-              : 'Stay up to date with the latest news and information from our clinic.'}
+              ? `Current total: ${filteredAnnouncement.length} announcements` 
+              : 'Stay up to date with the latest news from our clinic.'}
           </p>
           
           <div className="flex justify-center w-full">
             {isDashboard ? (
               <button 
                 onClick={() => router.push('/announcement/add')} 
-                className="bg-blue-600 text-white py-3 px-8 rounded-full text-lg font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center gap-2"
+                className="bg-blue-600 text-white py-4 px-10 rounded-full text-lg font-black hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-95 flex items-center gap-2"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4"/></svg>
-                Add Announcement
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4"/></svg>
+                Create New Announcement
               </button>
             ) : isAdmin && (
               <button 
                 onClick={() => router.push(`/announcement/manage`)} 
-                className="bg-slate-900 text-white text-lg font-bold py-3 px-10 rounded-full hover:bg-slate-800 transition-all active:scale-95 shadow-md hover:shadow-lg flex items-center gap-2"
+                className="bg-slate-900 text-white text-lg font-bold py-3 px-10 rounded-full hover:bg-slate-800 transition-all active:scale-95 shadow-lg flex items-center gap-2"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                Manage
+                Manage Dashboard
               </button>
             )}
           </div>
@@ -172,59 +205,75 @@ export default function AnnouncementPanel({
 
         {/* --- Filter Bar (Dashboard) --- */}
         {isDashboard && (
-          <div className="w-full bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4 mb-10">
-            <div className="flex flex-wrap items-center gap-6 w-full lg:w-auto">
-              <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 ml-1">Search Title/ID</label>
-                <input 
-                  type="text" 
-                  placeholder="Enter keywords..."
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 w-full sm:w-64 outline-none text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
-                  value={filterTitle} 
-                  onChange={(e) => handleFilterChange(setFilterTitle, e.target.value)} 
-                />
+          <div className="w-full bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 flex flex-wrap items-end gap-6 mb-10">
+              <div className="flex flex-col flex-1 min-w-[200px]">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Search Title / ID</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                  </div>
+                  <input 
+                    type="text" 
+                    placeholder="Enter keywords..."
+                    className="bg-slate-50 border border-slate-100 rounded-xl pl-12 pr-5 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold w-full" 
+                    value={filterTitle} 
+                    onChange={(e) => handleFilterChange(setFilterTitle, e.target.value)} 
+                  />
+                </div>
               </div>
-              <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 ml-1">Author</label>
-                <input 
-                  type="text" 
-                  placeholder="Admin name..."
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 w-full sm:w-48 outline-none text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
-                  value={filterAuthor} 
-                  onChange={(e) => handleFilterChange(setFilterAuthor, e.target.value)} 
-                />
+              <div className="flex flex-col w-full sm:w-56">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Author</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                  </div>
+                  <input 
+                    type="text" 
+                    placeholder="Admin name..."
+                    className="bg-slate-50 border border-slate-100 rounded-xl pl-12 pr-5 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all font-bold w-full" 
+                    value={filterAuthor} 
+                    onChange={(e) => handleFilterChange(setFilterAuthor, e.target.value)} 
+                  />
+                </div>
               </div>
-              <div className="flex flex-col w-full sm:w-auto">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 ml-1">Status</label>
-                <select 
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 w-full sm:w-48 text-slate-800 outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" 
-                  value={filterState} 
-                  onChange={(e) => handleFilterChange(setFilterState, e.target.value)}
-                >
-                  <option value="All">All Statuses</option>
-                  <option value="Edited">Edited Only</option>
-                  <option value="Not edited">Original Only</option>
-                </select>
+              <div className="flex flex-col w-full sm:w-48">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Status</label>
+                <div className="relative">
+                  <select 
+                    className="bg-slate-50 border border-slate-100 rounded-xl px-5 py-3 outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 transition-all font-bold w-full appearance-none" 
+                    value={filterState} 
+                    onChange={(e) => handleFilterChange(setFilterState, e.target.value)}
+                  >
+                    <option value="All">All Statuses</option>
+                    <option value="Edited">Edited Only</option>
+                    <option value="Not edited">Original Only</option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
+                  </div>
+                </div>
               </div>
-            </div>
           </div>
         )}
 
         {/* --- Search Bar (Guest) --- */}
         {!isDashboard && showSearch && (
           <div className="relative w-full max-w-xl mx-auto mb-12">
+            <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+               <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
             <input 
               type="text" 
               placeholder="Search announcements by title..." 
-              className="w-full bg-white p-4 pl-12 border border-slate-200 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 text-lg transition-all" 
+              className="w-full bg-white py-4 pl-16 pr-6 border border-slate-200 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 text-lg transition-all font-bold placeholder:font-medium placeholder:text-slate-400" 
               value={filterTitle} 
               onChange={(e) => handleFilterChange(setFilterTitle, e.target.value)} 
             />
-            <svg className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           </div>
         )}
 
         {/* --- Content Section --- */}
+<<<<<<< Updated upstream
          {isDeleting ? (
                             <div className="flex flex-col items-center justify-center gap-4 animate-fade-in py-32">
                                 <CircularProgress/>
@@ -301,11 +350,96 @@ export default function AnnouncementPanel({
                 )}
               </tbody>
             </table>
+=======
+        {isDashboard ? (
+          <div className="w-full bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse min-w-[800px]">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-left">
+                    <th className="py-5 px-8 text-xs font-black text-slate-400 uppercase tracking-widest w-2/5">Announcement</th>
+                    <th className="py-5 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Author</th>
+                    <th className="py-5 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                    <th className="py-5 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Date Created</th>
+                    {/* 📌 เปลี่ยนหัวคอลัมน์ Actions เป็น text-center */}
+                    <th className="py-5 px-8 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {paginatedData.map((item: any) => (
+                    <tr key={item._id} onClick={() => router.push(`/announcement/${item._id}`)} className="hover:bg-slate-50 transition-colors cursor-pointer group">
+                      <td className="py-5 px-8">
+                        <div className="flex items-center gap-5">
+                          <div className="w-16 h-16 bg-white flex-shrink-0 flex items-center justify-center border border-slate-200 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-all">
+                            {item.logoURL ? (
+                              <img src={transformDriveLink(item.logoURL)} alt="announcement" className="w-full h-full object-contain p-1.5 group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                            ) : (
+                              <span className="text-[10px] text-slate-400 font-medium uppercase">No Img</span>
+                            )}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-lg font-bold leading-snug text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-1" dangerouslySetInnerHTML={{ __html: item.title.replace(/\\n/g, ' ') }} />
+                            <span className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">ID: {item._id.slice(-6)}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-5 px-6 text-center text-sm font-bold text-slate-600">
+                        {typeof item.author === 'object' ? item.author.name : (item.author || 'admin')}
+                      </td>
+                      <td className="py-5 px-6 text-center">
+                        {item.isEdited ? (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-amber-50 text-amber-600 border border-amber-200 uppercase tracking-wider">
+                            Edited
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-slate-50 text-slate-400 border border-slate-200 uppercase tracking-wider">
+                            Original
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-5 px-6 text-center text-sm text-slate-500 font-medium">
+                        {formatDateString(item.createdAt)}
+                      </td>
+                      <td className="py-5 px-8">
+                        {/* 📌 เปลี่ยน justify-end เป็น justify-center */}
+                        <div className="flex gap-2 justify-center">
+                          <button 
+                            title="Edit Announcement"
+                            onClick={(e) => { e.stopPropagation(); router.push(`/announcement/edit/${item._id}`); }} 
+                            className="p-3 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                          </button>
+                          <button 
+                            title="Delete Announcement"
+                            onClick={(e) => { e.stopPropagation(); handleDelete(item._id, item.title); }} 
+                            disabled={isDeleting === item._id}
+                            className="p-3 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all disabled:opacity-50"
+                          >
+                            {isDeleting === item._id ? <CircularProgress size={20} color="inherit" /> : (
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            )}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {/* Empty State */}
+              {paginatedData.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-24 text-slate-400 bg-slate-50/50">
+                  <svg className="w-16 h-16 mb-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <p className="text-xl font-bold text-slate-500">No announcements found</p>
+                  <p className="text-sm mt-2 font-medium">Try adjusting your search keywords or filters.</p>
+                </div>
+              )}
+            </div>
+>>>>>>> Stashed changes
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
             {paginatedData.map((announcement: any) => (
-              // 📌 เปลี่ยนจาก <Link> เป็น <div> ธรรมดา เพื่อปลดล็อกให้คลิกได้แค่ปุ่ม Read more
               <div 
                 key={announcement._id} 
                 className="w-full h-[180px] bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex border border-slate-200 group"
@@ -316,13 +450,14 @@ export default function AnnouncementPanel({
                   title={announcement.title} 
                   date={announcement.createdAt} 
                   isEdited={announcement.isEdited} 
-                  className="group-hover:bg-slate-50/50 transition-colors"
                 />
               </div>
             ))}
             {paginatedData.length === 0 && (
-              <div className="col-span-1 lg:col-span-2 py-12 text-center text-slate-500 font-medium text-lg">
-                No announcements found.
+              <div className="col-span-1 lg:col-span-2 py-24 flex flex-col items-center justify-center text-slate-400">
+                  <svg className="w-16 h-16 mb-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                  <p className="text-xl font-bold text-slate-500">No announcements yet</p>
+                  <p className="text-sm mt-2 font-medium">Check back later for updates from our clinic.</p>
               </div>
             )}
           </div>
@@ -345,14 +480,3 @@ export default function AnnouncementPanel({
     </section>
   );
 }
-
-/**
- * const transformDriveLink = (url: string) => {
-    if (!url) return '';
-    if (url.includes('drive.google.com')) {
-      const fileId = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0];
-      return `https://lh3.googleusercontent.com/d/${fileId}`; 
-    }
-    return url;
-  };
- */

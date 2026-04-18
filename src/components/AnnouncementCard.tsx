@@ -87,18 +87,15 @@ export default function AnnouncementCard({
           dangerouslySetInnerHTML={{ __html: formatText(title) }}
         />
 
-        {/* ✨ ส่วนล่าง: ปุ่ม Read more */}
-        {/* 📌 เปลี่ยนจาก div เป็น Link และใช้ group/btn เพื่อผูก Hover Effect ไว้แค่ตรงนี้ */}
+        {/* ✨ ส่วนล่าง: ปุ่ม Read more (เปลี่ยนเป็น Link เพื่อให้คลิกไปต่อได้) */}
         <Link 
-          href={`/announcement/${id}`} 
-          className="mt-auto pt-4 flex items-center text-blue-600 font-bold text-sm w-fit group/btn hover:text-blue-800 transition-colors"
+          href={`/announcement/${id}`}
+          className="mt-auto pt-4 flex items-center text-blue-600 font-bold text-sm w-fit hover:text-blue-800 transition-colors"
         >
-          <span>Read more</span>
-          <svg 
-            className="w-4 h-4 ml-1.5 transform group-hover/btn:translate-x-1.5 transition-transform duration-300" 
-            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          Read more
+          {/* 📌 ลบ class ที่เกี่ยวกับการขยับออกหมดแล้ว ลูกศรจะอยู่นิ่งๆ */}
+          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
           </svg>
         </Link>
 
