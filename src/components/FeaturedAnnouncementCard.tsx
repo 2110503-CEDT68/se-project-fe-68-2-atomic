@@ -54,9 +54,8 @@ export default function FeaturedAnnouncementCard({
       <div className="w-[45%] p-5 flex flex-col justify-between">
         <div className="flex flex-col gap-3">
 
-          {/* New badge */}
           <div className="self-start bg-amber-400 text-amber-900 text-sm font-extrabold px-4 py-1 rounded">
-            New
+            Lastest
           </div>
 
           {/* Date */}
