@@ -5,6 +5,15 @@ import AnnouncementCard from './AnnouncementCard';
 import { Pagination, CircularProgress } from '@mui/material';
 import Link from 'next/link';
 
+const transformDriveLink = (url: string) => {
+  if (!url) return '';
+  if (url.includes('drive.google.com')) {
+    const fileId = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0];
+    return `https://lh3.googleusercontent.com/d/${fileId}`; 
+  }
+  return url;
+};
+
 const monthMap: Record<string, string> = {
   '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
   '05': 'May', '06': 'Jun', '07': 'Jul', '08': 'Aug',
@@ -46,15 +55,6 @@ export default function AnnouncementPanel({
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   const ITEMS_PER_PAGE = 10; 
-
-  const transformDriveLink = (url: string) => {
-    if (!url) return '';
-    if (url.includes('drive.google.com')) {
-      const fileId = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0];
-      return `https://lh3.googleusercontent.com/d/${fileId}`; 
-    }
-    return url;
-  };
 
   const formatDateString = (date: string | Date) => {
     if (!date) return '-';
@@ -130,7 +130,6 @@ export default function AnnouncementPanel({
     router.push(`${pathname}?${params}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-   
 
   return (
     <section className={`!w-full !min-h-screen flex flex-col pt-12 pb-20 px-4 sm:px-8 font-sukhumvit ${
@@ -142,7 +141,7 @@ export default function AnnouncementPanel({
       <div className="max-w-7xl mx-auto flex flex-col items-center w-full">
         
         {/* --- Header Section --- */}
-        <div className="w-full flex flex-col items-center mb-10 text-center">
+        <div className="w-full flex flex-col items-center mb-12 text-center">
           <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-slate-900 tracking-tight">
             {isDashboard ? 'Manage Announcements' : 'Clinic Announcements'}
           </h2>
@@ -152,29 +151,32 @@ export default function AnnouncementPanel({
               : 'Stay up to date with the latest news from our clinic.'}
           </p>
           
-          <div className="flex justify-center w-full">
-            {isDashboard ? (
-              <button 
-                onClick={() => router.push('/announcement/add')} 
-                className="bg-blue-600 text-white py-4 px-10 rounded-full text-lg font-black hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-95 flex items-center gap-2"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4"/></svg>
-                Create New Announcement
-              </button>
-            ) : isAdmin && (
-              <button 
-                onClick={() => router.push(`/announcement/manage`)} 
-                className="bg-slate-900 text-white text-lg font-bold py-3 px-10 rounded-full hover:bg-slate-800 transition-all active:scale-95 shadow-lg flex items-center gap-2"
-              >
-                Manage Dashboard
-              </button>
-            )}
-          </div>
+          {/* ✅ ปรับใหม่: เช็คเงื่อนไขก่อนแสดงผล ถ้าไม่มีสิทธิ์ปุ่มก้อนนี้จะไม่กินที่เลย */}
+          {(isDashboard || (isAdmin && !isDashboard)) && (
+            <div className="flex justify-center w-full">
+              {isDashboard ? (
+                <button 
+                  onClick={() => router.push('/announcement/add')} 
+                  className="bg-blue-600 text-white py-4 px-10 rounded-full text-lg font-black hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-95 flex items-center gap-2"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4"/></svg>
+                  Create New Announcement
+                </button>
+              ) : (
+                <button 
+                  onClick={() => router.push(`/announcement/manage`)} 
+                  className="bg-slate-900 text-white text-lg font-bold py-3 px-10 rounded-full hover:bg-slate-800 transition-all active:scale-95 shadow-lg flex items-center gap-2"
+                >
+                  Manage Dashboard
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* --- Filter Bar (Dashboard) --- */}
         {isDashboard && (
-          <div className="w-full bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 flex flex-wrap items-end gap-6 mb-10">
+          <div className="w-full bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 flex flex-wrap items-end gap-6 mb-12">
               <div className="flex flex-col flex-1 min-w-[200px]">
                 <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Search Title / ID</label>
                 <div className="relative">
@@ -252,7 +254,6 @@ export default function AnnouncementPanel({
                     <th className="py-5 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Author</th>
                     <th className="py-5 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
                     <th className="py-5 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Date Created</th>
-                    {/* 📌 เปลี่ยนหัวคอลัมน์ Actions เป็น text-center */}
                     <th className="py-5 px-8 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
                   </tr>
                 </thead>
@@ -292,7 +293,6 @@ export default function AnnouncementPanel({
                         {formatDateString(item.createdAt)}
                       </td>
                       <td className="py-5 px-8">
-                        {/* 📌 เปลี่ยน justify-end เป็น justify-center */}
                         <div className="flex gap-2 justify-center">
                           <button 
                             title="Edit Announcement"
