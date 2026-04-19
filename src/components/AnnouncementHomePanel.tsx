@@ -44,53 +44,53 @@ export default function HomeAnnouncementSection({ announcementData }: { announce
           </Link>
 
           {/* Side cards */}
-<div className="flex flex-col flex-1 gap-4 h-full">
-  {rest.length === 0 ? (
-    <>
-    <div className="h-[220px] rounded-xl bg-white shadow-sm flex items-center justify-center">
-      <p className="text-gray-400 text-base">No announcements found.</p>
-    </div>
-    <div className="h-[220px] rounded-xl bg-white shadow-sm flex items-center justify-center">
-      <p className="text-gray-400 text-base">No announcements found.</p>
-    </div>
-  </>
-    
-  ) : rest.length === 1 ? (
-    <>
-      <Link
-        href={`/announcement/${rest[0]._id}`}
-        className="h-[220px] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-      >
-        <AnnouncementCard
-          id={rest[0]._id}
-          logoSrc={rest[0].logoURL}
-          title={rest[0].title}
-          date={rest[0].createdAt}
-          className="!w-full !h-full m-0 shadow-none hover:shadow-none"
-        />
-      </Link>
-      <div className="flex-1 rounded-xl bg-white shadow-sm flex items-center justify-center">
-        <p className="text-gray-400 text-base">No announcements found.</p>
-      </div>
-    </>
-  ) : (
-    rest.map((item) => (
-      <Link
-        key={item._id}
-        href={`/announcement/${item._id}`}
-        className="h-[220px] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-      >
-        <AnnouncementCard
-          id={item._id}
-          logoSrc={item.logoURL}
-          title={item.title}
-          date={item.createdAt}
-          className="!w-full !h-full m-0 shadow-none hover:shadow-none"
-        />
-      </Link>
-    ))
-  )}
-</div>
+          <div className="flex flex-col flex-1 gap-4 h-full">
+            {rest.length === 0 ? (
+              <>
+              <div className="h-[220px] rounded-xl bg-white shadow-sm flex items-center justify-center">
+                <p className="text-gray-400 text-base">No announcements found.</p>
+              </div>
+              <div className="h-[220px] rounded-xl bg-white shadow-sm flex items-center justify-center">
+                <p className="text-gray-400 text-base">No announcements found.</p>
+              </div>
+            </>
+              
+            ) : rest.length === 1 ? (
+              <>
+                <Link
+                  href={`/announcement/${rest[0]._id}`}
+                  className="h-[220px] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <AnnouncementCard
+                    id={rest[0]._id}
+                    logoSrc={rest[0].logoURL}
+                    title={rest[0].title}
+                    date={rest[0].createdAt}
+                    className="!w-full !h-full m-0 shadow-none hover:shadow-none"
+                  />
+                </Link>
+                <div className="flex-1 rounded-xl bg-white shadow-sm flex items-center justify-center">
+                  <p className="text-gray-400 text-base">No announcements found.</p>
+                </div>
+              </>
+            ) : (
+              rest.map((item) => (
+                <Link
+                  key={item._id}
+                  href={`/announcement/${item._id}`}
+                  className="h-[220px] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <AnnouncementCard
+                    id={item._id}
+                    logoSrc={item.logoURL}
+                    title={item.title}
+                    date={item.createdAt}
+                    className="!w-full !h-full m-0 shadow-none hover:shadow-none"
+                  />
+                </Link>
+              ))
+            )}
+          </div>
 
         </div>
 

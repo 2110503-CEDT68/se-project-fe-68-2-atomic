@@ -230,7 +230,7 @@ export default function AnnouncementPanel({
 
         {/* --- Content Section --- */}
         {isDeleting ? (
-          <div className="w-full bg-white border border-slate-200 rounded-[3rem] shadow-sm flex flex-col items-center justify-center gap-6 py-20">
+          <div className="w-full flex flex-col items-center justify-center gap-6 py-20 min-h-[400px]">
             <CircularProgress size={60} thickness={4} />
             <p className="text-2xl font-bold text-slate-900">Deleting Announcement...</p>
           </div>
@@ -337,7 +337,7 @@ export default function AnnouncementPanel({
               ))}
               {paginatedData.length === 0 && (
                 <div className="col-span-1 lg:col-span-2 py-12 text-center text-slate-500 font-medium text-lg">
-                  No announcements found.
+                  No new announcements at this time.
                 </div>
               )}
             </div>

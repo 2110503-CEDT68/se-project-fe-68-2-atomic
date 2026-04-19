@@ -37,6 +37,10 @@ export default function AddAnnouncementPanel({ token }: { token: any }) {
       return;
     }
 
+    if (!window.confirm("Are you sure you want to add this announcement?")) {
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     setSuccess(false);

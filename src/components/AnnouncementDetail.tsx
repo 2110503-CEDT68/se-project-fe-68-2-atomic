@@ -70,7 +70,7 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin, tok
   const formattedDescription = formatText(announcementData.description);
 
   return (
-    <main className="max-w-6xl mx-auto w-full bg-white p-10 sm:p-16 rounded-[3rem] shadow-sm border border-slate-200 my-10 font-sukhumvit">
+    <main className="max-w-6xl mx-auto w-full bg-white p-10 sm:p-16 rounded-[3rem] shadow-sm border border-slate-200 font-sukhumvit">
 
       {isDeleting ? (
         <div className="flex flex-col items-center justify-center gap-6 py-20">
