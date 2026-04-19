@@ -35,7 +35,7 @@ export default function BookingCard({
         {/* แถวที่ 1: ส่วน Header ด้านบน (System Record กับ ID) */}
         <div className="flex flex-wrap items-center gap-3">
           <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${isAdmin ? 'bg-indigo-100 text-indigo-700' : 'bg-cyan-100 text-cyan-700'}`}>
-            {isAdmin ? 'System Record' : 'My Appointment'}
+            {isAdmin ? 'MANAGE' : 'My Appointment'}
           </span>
           <span className="text-xs font-mono text-gray-500 bg-gray-50 px-2 py-1 rounded break-all">
             ID: {booking._id}
@@ -56,7 +56,7 @@ export default function BookingCard({
             )}
             
             <div className="flex flex-col border-l-4 border-blue-500 pl-4">
-              <span className="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1">Assigned Dentist</span>
+              <span className="text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1">Dentist</span>
               <span className="text-xl font-extrabold text-gray-800 break-words">{booking.dentist.name}</span>
             </div>
 
@@ -78,13 +78,13 @@ export default function BookingCard({
           <div className="flex flex-row gap-3 w-full lg:w-auto shrink-0">
             <button
               onClick={() => router.push(`/booking/edit?bid=${booking._id}`)}
-              className="flex-1 lg:flex-none lg:w-32 py-3.5 px-6 bg-gray-900 text-white font-bold rounded-2xl hover:bg-gray-700 transition-all active:scale-95 text-center shadow-md hover:shadow-lg"
+              className="flex-1 lg:flex-none lg:w-32 py-2 px-8 bg-slate-900 text-white font-bold rounded-full hover:bg-slate-800 transition-all active:scale-95 text-center shadow-md cursor-pointer"
             >
               Edit
             </button>
             <button
               onClick={() => handleDelete(booking._id)}
-              className="flex-1 lg:flex-none lg:w-32 py-3.5 px-6 bg-red-50 text-red-600 font-bold rounded-2xl hover:bg-red-600 hover:text-white transition-all duration-200 active:scale-95 text-center shadow-sm"
+              className="flex-1 lg:flex-none lg:w-32 py-2 px-8 bg-red-500 text-white font-bold rounded-full hover:bg-red-600 transition-all active:scale-95 text-center shadow-md cursor-pointer"
             >
               Delete
             </button>

@@ -125,7 +125,7 @@ export default function AnnouncementPanel({
   return (
     <section className={`!w-full !min-h-screen flex flex-col pt-12 pb-20 px-4 sm:px-8 font-sukhumvit ${isDashboard
       ? '!bg-[#838383]'
-      : '!bg-white !bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px]'
+      : '!bg-white'
       }`}>
 
       <div className={`max-w-7xl mx-auto flex flex-col items-center w-full ${isDashboard ? 'bg-white p-10 sm:p-16 rounded-[3rem] shadow-sm border border-slate-200' : ''}`}>
@@ -312,7 +312,7 @@ export default function AnnouncementPanel({
                 // 📌 เปลี่ยนจาก <Link> เป็น <div> ธรรมดา เพื่อปลดล็อกให้คลิกได้แค่ปุ่ม Read more
                 <div
                   key={announcement._id}
-                  className="w-full h-auto sm:h-[180px] min-h-[180px] bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex border border-slate-200 group"
+                  className="w-full h-auto md:h-[180px] min-h-[180px] bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex border border-slate-200 group"
                 >
                   <AnnouncementCard
                     id={announcement._id}

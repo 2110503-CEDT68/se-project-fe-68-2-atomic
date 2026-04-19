@@ -39,16 +39,16 @@ export default function AnnouncementCard({
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
   return (
-    <div className={`relative flex flex-col sm:flex-row w-full h-full font-sukhumvit ${className}`}>
+    <div className={`relative flex flex-col md:flex-row w-full h-full font-sukhumvit ${className}`}>
 
       {/* 🖼️ Left / Top — Image */}
-      <div className="w-full sm:w-[40%] h-40 sm:h-auto relative flex-shrink-0 bg-white border-b sm:border-b-0 sm:border-r border-slate-100 flex items-center justify-center p-4">
+      <div className="w-full md:w-[40%] h-40 md:h-auto relative flex-shrink-0 bg-white border-b md:border-b-0 md:border-r border-slate-100 flex items-center justify-center p-4">
         {logoSrc ? (
           <Image
             src={logoSrc}
             alt={title}
             fill={true}
-            className="object-contain p-2"
+            className="object-cover"
           />
         ) : (
           <span className="text-xs text-slate-400 font-medium uppercase tracking-wider">No Image</span>
@@ -56,7 +56,7 @@ export default function AnnouncementCard({
       </div>
 
       {/* 📝 Right / Bottom — Content Column */}
-      <div className="w-full sm:w-[60%] p-4 sm:p-5 flex flex-col h-full">
+      <div className="w-full md:w-[60%] p-4 md:p-5 flex flex-col h-full">
 
         {/* ส่วนบน: วันที่ และป้ายสถานะ */}
         <div className="flex items-center flex-wrap gap-2 mb-3">

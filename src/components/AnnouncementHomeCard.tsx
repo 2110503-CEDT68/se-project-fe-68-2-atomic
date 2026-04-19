@@ -38,10 +38,10 @@ export default function FeaturedAnnouncementCard({
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
   return (
-    <div className="relative flex flex-col sm:flex-row w-full h-full bg-white overflow-hidden font-sukhumvit">
+    <div className="relative flex flex-col md:flex-row w-full h-full bg-white overflow-hidden font-sukhumvit">
 
       {/* Left / Top — image */}
-      <div className="w-full sm:w-[55%] h-56 sm:h-auto relative flex-shrink-0">
+      <div className="w-full md:w-[55%] h-56 md:h-auto relative flex-shrink-0">
         <Image
           src={logoSrc}
           alt={title}
@@ -51,7 +51,7 @@ export default function FeaturedAnnouncementCard({
       </div>
 
       {/* Right / Bottom — content column */}
-      <div className="w-full sm:w-[45%] p-5 flex flex-col justify-between">
+      <div className="w-full md:w-[45%] p-5 flex flex-col justify-between">
         <div className="flex flex-col gap-3">
 
           {/* New badge */}
