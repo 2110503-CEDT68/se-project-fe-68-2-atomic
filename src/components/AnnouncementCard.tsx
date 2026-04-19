@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "next/link"; // 📌 นำเข้า Link สำหรับทำปุ่ม
 
 const monthMap: Record<string, string> = {
   '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
@@ -39,32 +39,57 @@ export default function AnnouncementCard({
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
   return (
-    <div className={`relative flex flex-row w-full h-full bg-white rounded-xl font-sukhumvit transition-shadow overflow-hidden ${className}`}>
+    <div className={`relative flex flex-col sm:flex-row w-full h-full font-sukhumvit ${className}`}>
 
-      {/* Logo */}
-      <div className="w-[40%] relative flex-shrink-0">
-        <Image
-          src={logoSrc}
-          alt={title}
-          fill={true}
-          className="object-contain p-2"
-        />
+      {/* 🖼️ Left / Top — Image */}
+      <div className="w-full sm:w-[40%] h-40 sm:h-auto relative flex-shrink-0 bg-white border-b sm:border-b-0 sm:border-r border-slate-100 flex items-center justify-center p-4">
+        {logoSrc ? (
+          <Image
+            src={logoSrc}
+            alt={title}
+            fill={true}
+            className="object-contain p-2"
+          />
+        ) : (
+          <span className="text-xs text-slate-400 font-medium uppercase tracking-wider">No Image</span>
+        )}
       </div>
 
-      {/* Description */}
-      <div className="w-[60%] p-5 flex flex-col justify-between">
-        <div>
-          <div className="flex items-center text-gray-500 font-bold mb-2 text-sm sm:text-base">
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      {/* 📝 Right / Bottom — Content Column */}
+      <div className="w-full sm:w-[60%] p-4 sm:p-5 flex flex-col h-full">
+
+        {/* ส่วนบน: วันที่ และป้ายสถานะ */}
+        <div className="flex items-center flex-wrap gap-2 mb-3">
+          <div className="flex items-center text-slate-400 font-semibold text-xs">
+            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span>Date : {formattedDate}</span>
+            <span>{formattedDate}</span>
           </div>
-          <h2
-            className="text-[#4a4a4a] text-left text-lg sm:text-xl font-medium leading-snug line-clamp-3"
-            dangerouslySetInnerHTML={{ __html: formatText(title) }}
-          />
+
         </div>
+
+        {/* ตรงกลาง: หัวข้อประกาศ */}
+        <h3
+          className="text-lg font-bold text-slate-800 leading-snug line-clamp-3"
+          dangerouslySetInnerHTML={{ __html: formatText(title) }}
+        />
+
+        {/* ✨ ส่วนล่าง: ปุ่ม Read more */}
+        {/* 📌 เปลี่ยนจาก div เป็น Link และใช้ group/btn เพื่อผูก Hover Effect ไว้แค่ตรงนี้ */}
+        <Link
+          href={`/announcement/${id}`}
+          className="mt-auto pt-4 flex items-center text-blue-600 font-bold text-sm w-fit group/btn hover:text-blue-800 transition-colors after:content-[''] after:absolute after:inset-0 after:z-10"
+        >
+          <span>Read more</span>
+          <svg
+            className="w-4 h-4 ml-1.5 transform group-hover/btn:translate-x-1.5 transition-transform duration-300"
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </Link>
+
       </div>
     </div>
   );

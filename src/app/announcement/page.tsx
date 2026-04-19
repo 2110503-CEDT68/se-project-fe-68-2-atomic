@@ -3,35 +3,32 @@ import AnnouncementPanel from "@/components/AnnouncementPanel";
 import { Suspense } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-import getAnnouncements from "@/libs/getAnnouncements";
-
-// import getAnnouncements from "@/libs/getAnnouncements";
+import getAnnouncements from "@/libs/getAnnouncements"
 
 export default async function AnnouncementPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
 
   const { page } = await searchParams;
 
-  let currentPage = await Number(page) || 1;
+  let currentPage = Number(page) || 1;
   currentPage = currentPage < 0 ? 1 : currentPage;
 
   const session = await getServerSession(authOptions)
   const isAdmin = session?.user.role === 'admin'
 
-  // fetch รอบแรกได้ total กับข้อมูล ที่มี or ไม่มี
-  let announcements: AnnouncementJson = await getAnnouncements(currentPage);
+  let announcements: AnnouncementJson = await getAnnouncements(1, 1000);
 
-  const totalPage = Math.ceil(announcements.pagination.total / 10.0)
-
-  // ถ้า out of range
-  if (currentPage > totalPage) {
-    currentPage = 1
-    announcements = await getAnnouncements(currentPage);
-  }
-
-  return (
-    <Suspense fallback={<Loading />}>
-      <div className="text-center p-5">
-        <AnnouncementPanel totalPage={totalPage} currentPage={currentPage} announcementData={announcements.data} isAdmin={isAdmin} showSearch={true} />
+  return(
+    <Suspense fallback={<Loading/>}>
+      {/* 📌 แก้ตรงนี้: เปลี่ยนจาก className="text-center p-5" เป็น "w-full" เพื่อลบขอบขาว */}
+      <div className="w-full">
+        <AnnouncementPanel 
+          totalPage={1}
+          currentPage={currentPage} 
+          announcementData={announcements?.data || []} 
+          isAdmin={isAdmin} 
+          showSearch={true}
+          token={session?.user?.token}
+        />
       </div>
     </Suspense>
   )

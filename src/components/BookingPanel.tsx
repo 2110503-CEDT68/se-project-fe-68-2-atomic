@@ -6,7 +6,7 @@ import timezone from 'dayjs/plugin/timezone';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import addBooking from '@/libs/addBooking';
 import deleteBooking from '@/libs/deleteBooking';
 import {
@@ -19,21 +19,27 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import BookingCard from './BookingCard';
 
-export default function BookingPanel({ dentistJsonReady, bookingJsonReady, token, isAdmin }: { dentistJsonReady: DentistJson, bookingJsonReady: BookingJson, token: string, isAdmin: boolean }) {
+export default function BookingPanel({ 
+  dentistJsonReady, 
+  bookingJsonReady, 
+  token, 
+  isAdmin 
+}: { 
+  dentistJsonReady: any; 
+  bookingJsonReady: any; 
+  token: string; 
+  isAdmin: boolean; 
+}) {
 
-  // If user book from dentist Card
-  const urlParams = useSearchParams()
-  const did = urlParams.get('did')
+  const urlParams = useSearchParams();
+  const did = urlParams.get('did');
 
-  // สำหรับฟอร์มสร้างนัดหมาย
   const [selectedDentist, setSelectedDentist] = useState(did ? did : '');
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
-  // Loading states
   const [isCreating, setIsCreating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Error state for booking form
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [dateError, setDateError] = useState<string | null>(null);
 
@@ -43,7 +49,6 @@ export default function BookingPanel({ dentistJsonReady, bookingJsonReady, token
       setIsCreating(true);
       setBookingError(null);
       try {
-        // Using Bangkok Time Zone GMT+7
         const isoDate = dayjs.tz(selectedDate.format('YYYY-MM-DD'), 'Asia/Bangkok').toISOString();
         await addBooking(selectedDentist, isoDate, token);
         window.location.reload();
@@ -51,126 +56,141 @@ export default function BookingPanel({ dentistJsonReady, bookingJsonReady, token
         setIsCreating(false);
         const is500 = err?.message?.includes('500');
         setBookingError(is500
-          ? 'There was a problem, please try again.'
+          ? 'There was a problem with the server, please try again.'
           : 'Unable to create the booking.');
       }
     }
   };
 
-  const handleRemove = async (id: string) => {
-    if (confirm("Are you sure you want to remove this appointment?")) {
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this appointment?")) {
       setIsDeleting(true);
-      await deleteBooking(id, token);
-      window.location.reload();
+      try {
+        await deleteBooking(id, token);
+        window.location.reload();
+      } catch (error) {
+        setIsDeleting(false);
+        alert("Failed to delete booking.");
+      }
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex flex-col">
-      <main className="flex-grow flex justify-center items-center p-6">
-        <div className="bg-white w-full max-w-2xl p-12 rounded-[2rem] shadow-xl min-h-[400px] flex flex-col justify-center">
+    <div className="min-h-[calc(100vh-64px)] flex flex-col w-full">
+      <main className="flex-grow flex justify-center items-center p-4 sm:p-8">
+        
+        {/* ปรับเป็น max-w-7xl เพื่อให้กล่องกว้างขึ้นมากๆ */}
+        <div className="bg-white/90 backdrop-blur-md w-full max-w-7xl p-8 sm:p-14 rounded-[2.5rem] shadow-2xl min-h-[500px] flex flex-col justify-center border border-white/50">
 
           {isCreating ? (
-            <div className="flex flex-col items-center justify-center gap-4 animate-fade-in">
-              <CircularProgress />
-              <p className="text-2xl font-bold text-black">Creating Booking...</p>
+            <div className="flex flex-col items-center justify-center gap-6 animate-fade-in py-20">
+              <CircularProgress size={64} thickness={4} />
+              <p className="text-3xl font-black text-gray-800">Creating Booking...</p>
             </div>
           ) : isDeleting ? (
-            <div className="flex flex-col items-center justify-center gap-4 animate-fade-in">
-              <CircularProgress />
-              <p className="text-2xl font-bold text-red-600">Deleting Booking...</p>
+            <div className="flex flex-col items-center justify-center gap-6 animate-fade-in py-20">
+              <CircularProgress color="error" size={64} thickness={4} />
+              <p className="text-3xl font-black text-red-600">Deleting Booking...</p>
             </div>
-          ) : isAdmin ? (
-            <div className="animate-fade-in text-center">
-              <h1 className="text-4xl font-extrabold mb-3 text-black">Manage Booking</h1>
-              <p className='text-xl mb-4'>Total Booking: {bookingJsonReady.data.length}</p>
-              <div className="space-y-4">
-                {bookingJsonReady.data.map((booking: BookingItem) => (
-                  <BookingCard key={booking._id} booking={booking} handleRemove={handleRemove} isAdmin={isAdmin} />
+          ) : isAdmin || bookingJsonReady.count > 0 ? (
+            <div className="animate-fade-in w-full">
+              <div className="text-center mb-10">
+                <h1 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4">
+                  {isAdmin ? 'Manage Bookings' : 'Your Appointments'}
+                </h1>
+                <p className='text-lg text-gray-500 font-medium'>
+                  {isAdmin ? `Total Bookings: ${bookingJsonReady.data.length}` : 'Manage your upcoming dental visits'}
+                </p>
+              </div>
+
+              <div className="space-y-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                {bookingJsonReady.data.map((booking: any) => (
+                  <BookingCard 
+                    key={booking._id} 
+                    booking={booking} 
+                    handleDelete={handleDelete} 
+                    isAdmin={isAdmin} 
+                  />
                 ))}
               </div>
             </div>
           ) : (
-            bookingJsonReady.count === 0 ?
-              /* --- หน้าที่ 1: Make an Appointment (ยังไม่มี Session การจอง) --- */
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <div className="animate-fade-in">
-                  <h1 className="text-4xl font-extrabold text-center mb-16 text-black">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <div className="animate-fade-in max-w-2xl mx-auto w-full">
+                <div className="text-center mb-12">
+                  <h1 className="text-4xl sm:text-5xl font-black text-gray-900 mb-4">
                     Make an Appointment
                   </h1>
-                  {bookingError && (
-                    <p className="text-center text-red-600 font-medium mb-4">{bookingError}</p>
-                  )}
-                  <form onSubmit={handleConfirm} className="space-y-10">
-                    <TextField
-                      select
-                      fullWidth
-                      label="Select a Dentist"
-                      value={selectedDentist}
-                      onChange={(e) => { setSelectedDentist(e.target.value); setBookingError(null); }}
-                      required
-                      variant="outlined"
-                      error={!!bookingError}
-                      slotProps={{
-                        input: { className: "rounded-xl text-lg" }
+                  <p className="text-gray-500 text-lg">Select a dentist and your preferred date</p>
+                </div>
+                
+                {bookingError && (
+                  <div className="bg-red-50 text-red-600 font-bold p-4 rounded-2xl text-center mb-8 border border-red-100">
+                    {bookingError}
+                  </div>
+                )}
+                
+                <form onSubmit={handleConfirm} className="space-y-8">
+                  <TextField
+                    select
+                    fullWidth
+                    label="Select a Dentist"
+                    value={selectedDentist}
+                    onChange={(e) => { setSelectedDentist(e.target.value); setBookingError(null); }}
+                    required
+                    variant="outlined"
+                    error={!!bookingError}
+                    slotProps={{
+                      input: { className: "rounded-2xl text-lg bg-gray-50" }
+                    }}
+                  >
+                    {dentistJsonReady.data.map((dentist: any) => (
+                      <MenuItem key={dentist.id} value={dentist.id}>{dentist.name}</MenuItem>
+                    ))}
+                  </TextField>
+
+                  <div className="flex flex-col">
+                    <DatePicker
+                      label="Select Date"
+                      value={selectedDate}
+                      format="YYYY/MM/DD"
+                      onChange={(newValue) => {
+                        if (newValue && newValue.isBefore(dayjs(), 'day')) {
+                          setDateError('Date cannot be in the past');
+                          setSelectedDate(null);
+                        } else {
+                          setSelectedDate(newValue);
+                          setDateError(null);
+                          setBookingError(null);
+                        }
                       }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          required: true,
+                          error: !!(bookingError || dateError),
+                          sx: {
+                            '& .MuiOutlinedInput-root': { borderRadius: '1rem', backgroundColor: '#f9fafb' }
+                          }
+                        }
+                      }}
+                    />
+                    {dateError && (
+                      <p className="text-sm font-bold text-red-500 mt-2 ml-2">{dateError}</p>
+                    )}
+                  </div>
+
+                  <div className="flex justify-center pt-8">
+                    <button 
+                      type="submit" 
+                      className="w-full sm:w-auto bg-black text-white text-xl font-bold py-4 px-16 rounded-2xl hover:bg-gray-800 transition-all active:scale-95 shadow-xl hover:shadow-2xl"
                     >
-                      {
-                        dentistJsonReady.data.map((dentist: DentistItem) => (
-                          <MenuItem key={dentist.id} value={dentist.id}>{dentist.name}</MenuItem>
-                        ))
-                      }
-                    </TextField>
-
-                    <div className="flex flex-col flex-grow mt-6">
-                      <DatePicker
-                        label="Select Date"
-                        value={selectedDate}
-                        format="YYYY/MM/DD"
-                        onChange={(newValue) => {
-                          if (newValue && newValue.isBefore(dayjs(), 'day')) {
-                            setDateError('Date cannot be in the past');
-                            setSelectedDate(null);
-                          } else {
-                            setSelectedDate(newValue);
-                            setDateError(null);
-                            setBookingError(null);
-                          }
-                        }}
-                        slotProps={{
-                          textField: {
-                            fullWidth: true,
-                            required: true,
-                            error: !!(bookingError || dateError),
-                            sx: {
-                              '& .MuiOutlinedInput-root': { borderRadius: '0.75rem' }
-                            }
-                          }
-                        }}
-                      />
-                      {dateError && (
-                        <p className="text-sm font-medium text-red-600 mt-1">{dateError}</p>
-                      )}
-                    </div>
-
-                    <div className="flex justify-center pt-10">
-                      <button type="submit" className=" cursor-pointer bg-black text-white text-xl font-bold py-2 px-8 rounded-full hover:bg-gray-800 transition active:scale-95">
-                        Confirm
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </LocalizationProvider>
-              :
-              /* --- หน้าที่ 2: Your Appointment (มี Session การจองแล้ว) --- */
-              <div className="animate-fade-in text-center">
-                <h1 className="text-4xl font-extrabold mb-16 text-black">Your Appointment</h1>
-                <div className="space-y-4">
-                  {bookingJsonReady.data.map((booking: BookingItem) => (
-                    <BookingCard key={booking._id} booking={booking} handleRemove={handleRemove} isAdmin={isAdmin} />
-                  ))}
-                </div>
+                      Confirm Booking
+                    </button>
+                  </div>
+                </form>
               </div>
+            </LocalizationProvider>
           )}
 
         </div>

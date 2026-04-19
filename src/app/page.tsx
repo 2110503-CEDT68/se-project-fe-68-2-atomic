@@ -6,7 +6,7 @@ import getDentists from "@/libs/getDentists";
 import { Suspense } from "react";
 import getAnnouncements from "@/libs/getAnnouncements";
 import AnnouncementPanel from "@/components/AnnouncementPanel";
-import AnnouncementMenuPanel from "@/components/AnnouncementMenuPanel";
+import AnnouncementMenuPanel from "@/components/AnnouncementHomePanel";
 
 
 
@@ -17,7 +17,7 @@ export default async function Home() {
     <main>
       <Suspense fallback={<Loading />}>
         <Banner />
-        <AnnouncementMenuPanel announcementData={announcements.data} />
+        <AnnouncementMenuPanel announcementData={announcements?.data || []} />
         <DentistPanel dentistJsonReady={dentists} />
         <FeedbackPanel />
       </Suspense>

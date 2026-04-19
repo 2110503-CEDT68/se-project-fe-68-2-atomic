@@ -1,13 +1,12 @@
-'use server'
-export default async function getAnnouncements(currentPage: number){
-   const respond = await fetch(`${process.env.BACKEND_URL}/api/announcements?page=${currentPage}`)
-   
-   if(!respond.ok){
-	throw new Error("Failed to get Announcements")
-   }
+export default async function getAnnouncements(page: number, limit: number = 10) {
 
-   return respond.json();
-   // response.data.sort((a:any,b:any)=>
-   // new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-   // )
+  const response = await fetch(`${process.env.BACKEND_URL}/api/announcements?page=${page}&limit=${limit}`, {
+    next: { tags: ['announcements'] }
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch announcements");
+  }
+
+  return response.json();
 }

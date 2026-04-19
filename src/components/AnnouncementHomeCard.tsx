@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const monthMap: Record<string, string> = {
   '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
@@ -37,10 +38,10 @@ export default function FeaturedAnnouncementCard({
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
   return (
-    <div className="relative flex flex-row w-full h-full bg-white overflow-hidden">
+    <div className="relative flex flex-col sm:flex-row w-full h-full bg-white overflow-hidden font-sukhumvit">
 
-      {/* Left — image */}
-      <div className="w-[55%] relative flex-shrink-0">
+      {/* Left / Top — image */}
+      <div className="w-full sm:w-[55%] h-56 sm:h-auto relative flex-shrink-0">
         <Image
           src={logoSrc}
           alt={title}
@@ -49,8 +50,8 @@ export default function FeaturedAnnouncementCard({
         />
       </div>
 
-      {/* Right — content column */}
-      <div className="w-[45%] p-5 flex flex-col justify-between">
+      {/* Right / Bottom — content column */}
+      <div className="w-full sm:w-[45%] p-5 flex flex-col justify-between">
         <div className="flex flex-col gap-3">
 
           {/* New badge */}
@@ -63,15 +64,29 @@ export default function FeaturedAnnouncementCard({
             <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span>Date : {formattedDate}</span>
+            <span>{formattedDate}</span>
           </div>
 
           {/* Title */}
           <h2
-            className="text-[#4a4a4a] text-left text-lg sm:text-xl font-medium leading-snug line-clamp-4"
+            className="text-[#4a4a4a] text-left text-lg sm:text-xl font-bold leading-snug line-clamp-4"
             dangerouslySetInnerHTML={{ __html: formatText(title) }}
           />
         </div>
+
+        {/* ✨ ส่วนล่าง: ปุ่ม Read more */}
+        <Link 
+          href={`/announcement/${id}`} 
+          className="flex items-center text-blue-600 font-bold text-sm w-fit group/btn hover:text-blue-800 transition-colors after:content-[''] after:absolute after:inset-0 after:z-10 no-underline"
+        >
+          <span>Read more</span>
+          <svg 
+            className="w-4 h-4 ml-1.5 transform group-hover/btn:translate-x-1.5 transition-transform duration-300" 
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </Link>
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ export default async function AnnouncementDetailPage({ params }: { params: Promi
 
     return (
         <Suspense fallback={<Loading />}>
-            <AnnouncementDetail announcementJsonReady={announcement} isAdmin={isAdmin}/>
+            <AnnouncementDetail announcementJsonReady={announcement} isAdmin={isAdmin} token={session?.user.token}/>
         </Suspense>
     );
 }
