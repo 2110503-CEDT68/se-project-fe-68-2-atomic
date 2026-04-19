@@ -3,17 +3,17 @@ import AnnouncementPanel from "@/components/AnnouncementPanel";
 import { Suspense } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-import getAnnouncements from "@/libs/getAnnoucements";
+import getAnnouncements from "@/libs/getAnnouncements";
 
 // import getAnnouncements from "@/libs/getAnnouncements";
 
-export default async function AnnouncementPage({searchParams} : {searchParams: Promise<{ page?: string }>}){
+export default async function AnnouncementPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
 
   const { page } = await searchParams;
 
   let currentPage = await Number(page) || 1;
   currentPage = currentPage < 0 ? 1 : currentPage;
-  
+
   const session = await getServerSession(authOptions)
   const isAdmin = session?.user.role === 'admin'
 
@@ -28,10 +28,10 @@ export default async function AnnouncementPage({searchParams} : {searchParams: P
     announcements = await getAnnouncements(currentPage);
   }
 
-  return(
-    <Suspense fallback={<Loading/>}>
+  return (
+    <Suspense fallback={<Loading />}>
       <div className="text-center p-5">
-        <AnnouncementPanel totalPage={totalPage} currentPage={currentPage} announcementData={announcements.data} isAdmin={isAdmin} showSearch={true}/>
+        <AnnouncementPanel totalPage={totalPage} currentPage={currentPage} announcementData={announcements.data} isAdmin={isAdmin} showSearch={true} />
       </div>
     </Suspense>
   )
