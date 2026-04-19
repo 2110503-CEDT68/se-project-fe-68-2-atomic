@@ -35,26 +35,29 @@ export default function EditAnnouncementPanel({ token, aid, initialData }: { tok
     const [description, setDescription] = useState(initialData.description);
     const [logoURL, setLogoURL] = useState(initialData.logoURL);
     const [bannerURL, setBannerURL] = useState(initialData.bannerURL);
-    
+
     const [step, setStep] = useState(1); // 1 = Edit, 2 = Preview
     const [isUpdating, setIsUpdating] = useState(false);
 
     const handleUpdate = async () => {
-        setIsUpdating(true);
-        try {
-            await updateAnnouncement(aid, title, description, logoURL, bannerURL, token);
-            await revalidateAnnouncement(aid);
-            router.refresh();
-            router.push(callbackUrl || "/announcement/manage");
-        } catch (error) {
-            console.error(error);
-            setIsUpdating(false);
+        if (confirm("Are you sure you want to update this announcement?")) {
+            setIsUpdating(true);
+            try {
+                await updateAnnouncement(aid, title, description, logoURL, bannerURL, token);
+                await revalidateAnnouncement(aid);
+                router.refresh();
+                router.push(callbackUrl || "/announcement/manage");
+            } catch (error) {
+                console.error(error);
+                setIsUpdating(false);
+                alert("Failed to update announcement");
+            }
         }
     };
 
     return (
         <div className="!w-full !min-h-screen flex flex-col pt-12 pb-20 px-4 sm:px-8 font-sukhumvit bg-[#838383]">
-            
+
             <main className="max-w-6xl mx-auto w-full bg-white p-10 sm:p-16 rounded-[3rem] shadow-sm border border-slate-200">
                 {isUpdating ? (
                     <div className="flex flex-col items-center justify-center gap-6 py-20">
@@ -63,18 +66,6 @@ export default function EditAnnouncementPanel({ token, aid, initialData }: { tok
                     </div>
                 ) : (
                     <>
-                        {/* Navigation */}
-                        <div className="mb-12">
-                            <button 
-                                onClick={() => step === 1 ? router.back() : setStep(1)} 
-                                className="inline-flex items-center text-slate-400 hover:text-slate-900 font-bold text-lg transition-all group cursor-pointer"
-                            >
-                                <svg className="w-6 h-6 mr-2 transform group-hover:-translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                </svg>
-                                {step === 1 ? 'Cancel' : 'Back to Edit'}
-                            </button>
-                        </div>
 
                         {/* --- Step 1: Edit Form --- */}
                         {step === 1 && (
@@ -82,7 +73,7 @@ export default function EditAnnouncementPanel({ token, aid, initialData }: { tok
                                 <div className="mb-16 text-center">
                                     <h1 className="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">Edit Announcement</h1>
                                 </div>
-                                
+
                                 <div className="flex flex-col gap-10">
                                     {/* Title Row */}
                                     <div className="flex flex-col gap-3">
@@ -94,7 +85,7 @@ export default function EditAnnouncementPanel({ token, aid, initialData }: { tok
                                             rows={2}
                                             value={title}
                                             onChange={(e) => setTitle(e.target.value)}
-                                            sx={{ 
+                                            sx={{
                                                 "& .MuiOutlinedInput-root": { borderRadius: "1.25rem", backgroundColor: "#ffffff", fontSize: "1.25rem", fontWeight: "medium" }
                                             }}
                                         />
@@ -146,10 +137,16 @@ export default function EditAnnouncementPanel({ token, aid, initialData }: { tok
                                     </div>
                                 </div>
 
-                                <div className="mt-16 flex justify-end">
-                                    <button 
+                                <div className="mt-16 flex flex-row items-center justify-center gap-4">
+                                    <button
+                                        onClick={() => router.back()}
+                                        className="bg-slate-900 text-white py-3 px-10 rounded-full font-bold text-xl hover:bg-slate-800 transition-all active:scale-95 shadow-md cursor-pointer"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
                                         onClick={() => setStep(2)}
-                                        className="bg-slate-900 text-white px-12 py-2 rounded-full font-extrabold hover:bg-slate-800 transition-all active:scale-95 shadow-lg text-lg cursor-pointer"
+                                        className="bg-blue-600 text-white py-3 px-12 rounded-full font-bold text-xl hover:bg-blue-700 transition-all active:scale-95 shadow-md cursor-pointer"
                                     >
                                         Next
                                     </button>
@@ -166,7 +163,7 @@ export default function EditAnnouncementPanel({ token, aid, initialData }: { tok
                                 </div>
 
                                 <div className="flex flex-col gap-12 max-w-4xl mx-auto">
-                                    
+
                                     {/* 📌 Before (Top) */}
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-4">
@@ -209,19 +206,19 @@ export default function EditAnnouncementPanel({ token, aid, initialData }: { tok
                                 </div>
 
                                 {/* Final Action Area */}
-                                <div className="mt-20 flex flex-col items-center border-t border-slate-100 pt-12">
-                                    <button 
+                                <div className="mt-20 flex flex-row items-center justify-center gap-4 border-t border-slate-100 pt-12">
+                                    <button
+                                        onClick={() => setStep(1)}
+                                        className="bg-slate-900 text-white py-3 px-12 rounded-full font-bold text-xl hover:bg-slate-800 transition-all active:scale-95 shadow-md cursor-pointer"
+                                    >
+                                        Back
+                                    </button>
+                                    <button
                                         onClick={handleUpdate}
                                         disabled={isUpdating}
-                                        className="bg-blue-600 text-white px-12 py-3 rounded-full font-black text-xl hover:bg-blue-700 transition-all active:scale-95 shadow-2xl shadow-blue-200 flex items-center justify-center min-w-[320px] cursor-pointer"
+                                        className="bg-blue-600 text-white py-3 px-12 rounded-full font-bold text-xl hover:bg-blue-700 transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer disabled:opacity-50"
                                     >
-                                        {isUpdating ? <CircularProgress size={28} color="inherit" /> : "Confirm & Save Changes"}
-                                    </button>
-                                    <button 
-                                        onClick={() => setStep(1)}
-                                        className="mt-6 text-slate-400 font-bold hover:text-slate-900 transition-colors py-2 cursor-pointer"
-                                    >
-                                        Go back
+                                        {isUpdating ? <CircularProgress size={24} color="inherit" /> : "Done"}
                                     </button>
                                 </div>
                             </div>

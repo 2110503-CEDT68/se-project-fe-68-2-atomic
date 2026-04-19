@@ -244,7 +244,7 @@ export default function AnnouncementPanel({
                     <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Author</th>
                     <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
                     <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Date Created</th>
-                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Actions</th>
+                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -295,7 +295,7 @@ export default function AnnouncementPanel({
                         <div className="flex gap-2 justify-end">
                           <button
                             onClick={(e) => { e.stopPropagation(); router.push(`/announcement/edit/${item._id}?callbackUrl=${encodeURIComponent(pathname)}`); }}
-                            className="bg-slate-900 text-white px-4 py-1.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-sm cursor-pointer"
+                            className="bg-slate-900 text-white px-6 py-1.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-sm cursor-pointer"
                           >
                             Edit
                           </button>
@@ -312,7 +312,7 @@ export default function AnnouncementPanel({
                   ))}
                   {paginatedData.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="py-12 text-center text-slate-500 font-medium text-lg">No announcements found matching your criteria.</td>
+                      <td colSpan={5} className="py-12 text-center text-slate-500 font-medium text-lg">No announcements found.</td>
                     </tr>
                   )}
                 </tbody>

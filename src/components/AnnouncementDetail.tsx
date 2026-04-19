@@ -112,7 +112,7 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin, tok
                 </Link>
                 <button
                   onClick={handleDelete}
-                  className="bg-red-500 text-white py-2 px-8 rounded-full font-bold hover:bg-red-600 transition-all active:scale-95 shadow-md cursor-pointer"
+                  className="bg-red-500 text-white py-2 px-6 rounded-full font-bold hover:bg-red-600 transition-all active:scale-95 shadow-md cursor-pointer"
                 >
                   Delete
                 </button>
