@@ -3,7 +3,7 @@ import { revalidateTag } from 'next/cache'
 
 export default async function updateAnnouncement(
     aid: string, 
-    name: string, 
+    title: string, 
     description: string, 
     logoURL: string, 
     bannerURL: string, 
@@ -16,7 +16,7 @@ export default async function updateAnnouncement(
 			authorization: `Bearer ${token}`,
 		},
         body: JSON.stringify({ 
-            name: name, 
+            title: title, 
             description: description, 
             logoURL: logoURL, 
             bannerURL: bannerURL,

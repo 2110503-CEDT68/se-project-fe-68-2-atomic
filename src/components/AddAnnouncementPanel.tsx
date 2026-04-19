@@ -2,11 +2,13 @@
 
 import { CircularProgress, TextField } from '@mui/material';
 import { useState } from 'react';
-import addAnnouncement from '@/libs/addAnnouncement'; 
-import { useRouter } from 'next/navigation';
+import addAnnouncement from '@/libs/addAnnouncement';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function AddAnnouncementPanel({ token }: { token: any }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
 
   const [formData, setFormData] = useState({
     title: '',
@@ -51,7 +53,7 @@ export default function AddAnnouncementPanel({ token }: { token: any }) {
       setIsLoading(false);
       setSuccess(true);
 
-      router.push('/announcement');
+      router.push(callbackUrl || '/announcement/manage');
       router.refresh();
 
     } catch (err: any) {
@@ -96,6 +98,11 @@ export default function AddAnnouncementPanel({ token }: { token: any }) {
                   multiline
                   rows={2}
                   variant="outlined"
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: 100
+                    }
+                  }}
                 />
 
                 <TextField
@@ -133,7 +140,7 @@ export default function AddAnnouncementPanel({ token }: { token: any }) {
                 <div className="flex flex-row gap-4 justify-center pt-2">
                   <button
                     type="button"
-                    onClick={() => router.push('/announcement')}
+                    onClick={() => router.push(callbackUrl || '/announcement/manage')}
                     className="cursor-pointer bg-black text-white text-xl font-bold py-3 px-10 rounded-full hover:bg-gray-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed active:scale-95"
                   >
                     Cancel

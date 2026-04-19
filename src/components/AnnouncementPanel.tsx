@@ -1,78 +1,374 @@
-  'use client'
-  import { useState } from 'react';
-  import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-  import AnnouncementCard from './AnnouncementCard';
-  import { Pagination, Stack } from '@mui/material';
-  import Link from 'next/link';
+'use client'
+import { useState, useMemo } from 'react';
+import Image from 'next/image';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import AnnouncementCard from './AnnouncementCard';
+import { Link, Pagination } from '@mui/material';
+import deleteAnnouncement from '@/libs/deleteAnnoucement';
+import { CircularProgress } from '@mui/material';
 
-  export default function AnnouncementPanel({totalPage, currentPage, announcementData, isAdmin=false, showSearch=false}: {totalPage: number, currentPage: number, announcementData: AnnouncementItem[], isAdmin?: boolean, showSearch?: boolean}) {
-    const router = useRouter()
-    const searchParams = useSearchParams();
-    const pathname = usePathname();
+// Map เดือนสำหรับจัด Format วันที่
+const monthMap: Record<string, string> = {
+  '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
+  '05': 'May', '06': 'Jun', '07': 'Jul', '08': 'Aug',
+  '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'
+};
 
-    const [searchTerm, setSearchTerm] = useState('')
-    const filteredAnnouncement = announcementData.filter((announcement: any)=>
-      announcement.title.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+// 📌 ฟังก์ชันจัด Format ข้อความ
+const formatText = (text: string) => {
+  if (!text) return '';
+  return text
+    .replace(/\\n/g, '<br />')
+    .replace(/\\t/g, '<span class="ml-8 inline-block"></span>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+};
 
-    const handleChangePage = (e: React.ChangeEvent<unknown>, value: number) => {
-      const params = new URLSearchParams(searchParams)
-      params.set('page', value.toString())
+export default function AnnouncementPanel({
+  totalPage,
+  currentPage,
+  announcementData = [],
+  isAdmin = false,
+  showSearch = false,
+  isDashboard = false,
+  token
+}: {
+  totalPage: number,
+  currentPage: number,
+  announcementData?: any[],
+  isAdmin?: boolean,
+  showSearch?: boolean,
+  isDashboard?: boolean,
+  token?: string
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
-      router.push(`${pathname}?${params}`)
+  const [filterTitle, setFilterTitle] = useState('');
+  const [filterAuthor, setFilterAuthor] = useState('');
+  const [filterState, setFilterState] = useState('All');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+
+  const ITEMS_PER_PAGE = 10;
+
+
+  const formatDateString = (date: string | Date) => {
+    if (!date) return '-';
+    const dateObj = new Date(date);
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const month = monthMap[String(dateObj.getMonth() + 1).padStart(2, '0')];
+    const year = dateObj.getFullYear();
+    let hour = dateObj.getHours();
+    const period = hour >= 12 ? 'PM' : 'AM';
+
+    if (hour === 0) {
+      hour = 12;
+    } else if (hour > 12) {
+      hour -= 12;
     }
 
-    return (
-      <section className="pt-8 pb-16 px-8 bg-white mb-6">
-        <div className="max-w-6xl mx-auto">
+    const minute = String(dateObj.getMinutes()).padStart(2, '0');
+    return `${day} ${month} ${year} ${hour}:${minute} ${period}`;
+  };
 
-          <div className="mb-8 text-left">
-            <h2 className="text-4xl font-bold text-black mb-2">Clinic Announcement</h2>
-          </div>
+  const handleFilterChange = (setter: React.Dispatch<React.SetStateAction<string>>, value: string) => {
+    setter(value);
+    const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
+    router.push(`${pathname}?${params}`);
+  };
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this announcement?")) {
+      setIsDeleting(true);
+      try {
+        await deleteAnnouncement(id, token!);
+        window.location.reload();
+      } catch (error) {
+        setIsDeleting(false);
+        alert("Failed to delete announcement.");
+      }
+    }
+  };
+  const filteredAnnouncement = useMemo(() => {
+    if (!announcementData || !Array.isArray(announcementData)) return [];
+    return announcementData.filter((announcement: any) => {
+      const titleMatch = (announcement.title || '').toLowerCase().includes(filterTitle.toLowerCase());
+      const authorObj = announcement.author;
+      const authorName = typeof authorObj === 'object' ? (authorObj?.name || '') : (authorObj || 'admin');
+      const authorMatch = authorName.toLowerCase().includes(filterAuthor.toLowerCase());
 
-          {
-            showSearch && (
-            <input 
-              type="text" 
-              placeholder="🔍 Search announcement by title..." 
-              className="mt-4 w-full md:w-1/2 p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 text-lg shadow-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            )
+      let stateMatch = true;
+      if (filterState === 'Edited') {
+        stateMatch = announcement.isEdited === true;
+      } else if (filterState === 'Not edited') {
+        stateMatch = announcement.isEdited === false || announcement.isEdited === undefined;
+      }
 
-          }
+      return titleMatch && authorMatch && stateMatch;
+    });
+  }, [filterTitle, filterAuthor, filterState, announcementData]);
 
-          {
-            isAdmin && showSearch ?
-            <div className="flex flex-row justify-center gap-4 my-5">
+  const calculatedTotalPage = Math.ceil(filteredAnnouncement.length / ITEMS_PER_PAGE) || 1;
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredAnnouncement.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredAnnouncement, currentPage]);
+
+  const handleChangePage = (e: React.ChangeEvent<unknown>, value: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('page', value.toString());
+    router.push(`${pathname}?${params}`);
+  };
+
+
+  return (
+    <section className={`!w-full !min-h-screen flex flex-col pt-12 pb-20 px-4 sm:px-8 font-sukhumvit ${isDashboard
+      ? '!bg-[#838383]'
+      : '!bg-white'
+      }`}>
+
+      <div className={`max-w-7xl mx-auto flex flex-col items-center w-full ${isDashboard ? 'bg-white p-10 sm:p-16 rounded-[3rem] shadow-sm border border-slate-200' : ''}`}>
+
+        {/* --- Header Section --- */}
+        <div className="w-full flex flex-col items-center mb-10 text-center">
+          {isDashboard && (
+            <div className="w-full flex justify-start mb-4">
               <button
-                onClick={() => router.push(`/announcement/add`)}
-                className="cursor-pointer bg-black text-white text-xl font-bold py-2 px-8 mt-5 rounded-full hover:bg-gray-800 transition flex items-center gap-2 active:scale-95"
-                >
-                  Add Announcement
+                onClick={() => router.push('/announcement')}
+                className="inline-flex items-center text-gray-500 hover:text-black font-bold text-lg transition-colors group cursor-pointer"
+              >
+                <svg className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back
               </button>
             </div>
-            : null
-          }
+          )}
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-slate-900 tracking-tight">
+            {isDashboard ? 'Manage Announcements' : 'Announcements'}
+          </h2>
+          <p className="text-slate-500 text-lg mb-8 max-w-2xl font-medium">
+            {isDashboard
+              ? 'Organize and update the information shared with your patients.'
+              : 'Stay up to date with the latest news and information from our clinic.'}
+          </p>
 
-          <div className="flex flex-wrap justify-evenly gap-8 mt-8">
-                {
-                  filteredAnnouncement.length === 0 ?
-                  <p>No announcement found</p> 
-                  :
-                  filteredAnnouncement.map((announcement: AnnouncementItem) => (
-                    <Link key={announcement._id} href={`/announcement/${announcement._id}`} className="w-[45%] h-[220px] rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden m-5 font-sukhumvit">
-                      <AnnouncementCard key={announcement._id} id={announcement._id} logoSrc={announcement.logoURL} title={announcement.title} date={announcement.createdAt}/>
-                    </Link>
-                  ))
-                }
-          </div>
-
-          <div className='flex justify-center mt-20'>
-            <Pagination count={totalPage} color="primary" page={currentPage} onChange={handleChangePage}/>
+          <div className="flex justify-center w-full">
+            {isDashboard ? (
+              <button
+                onClick={() => router.push(`/announcement/add?callbackUrl=${encodeURIComponent(pathname)}`)}
+                className="bg-blue-600 text-white py-3 px-8 rounded-full text-lg font-bold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg active:scale-95 cursor-pointer"
+              >
+                Add Announcement
+              </button>
+            ) : isAdmin && (
+              <button
+                onClick={() => router.push(`/announcement/manage`)}
+                className="bg-slate-900 text-white text-lg font-bold py-3 px-10 rounded-full hover:bg-slate-800 transition-all active:scale-95 shadow-md hover:shadow-lg cursor-pointer"
+              >
+                Manage Announcements
+              </button>
+            )}
           </div>
         </div>
-      </section>
-    );
-  }
+
+        {/* --- Filter Bar (Dashboard) --- */}
+        {isDashboard && (
+          <div className="w-full bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4 mb-10">
+            <div className="flex flex-wrap items-center gap-6 w-full lg:w-auto">
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 ml-1">Search Title/ID</label>
+                <input
+                  type="text"
+                  placeholder="Enter keywords..."
+                  className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 w-full sm:w-64 outline-none text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  value={filterTitle}
+                  onChange={(e) => handleFilterChange(setFilterTitle, e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 ml-1">Author</label>
+                <input
+                  type="text"
+                  placeholder="Admin name..."
+                  className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 w-full sm:w-48 outline-none text-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  value={filterAuthor}
+                  onChange={(e) => handleFilterChange(setFilterAuthor, e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col w-full sm:w-auto">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 ml-1">Status</label>
+                <select
+                  className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 w-full sm:w-48 text-slate-800 outline-none cursor-pointer focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  value={filterState}
+                  onChange={(e) => handleFilterChange(setFilterState, e.target.value)}
+                >
+                  <option value="All">All Status</option>
+                  <option value="Not edited">Original</option>
+                  <option value="Edited">Edited</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* --- Search Bar (Guest) --- */}
+        {!isDashboard && showSearch && (
+          <div className="relative w-full max-w-xl mx-auto mb-12">
+            <input
+              type="text"
+              placeholder="Search announcements by title..."
+              className="w-full bg-white p-4 pl-12 border border-slate-200 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-800 text-lg transition-all"
+              value={filterTitle}
+              onChange={(e) => handleFilterChange(setFilterTitle, e.target.value)}
+            />
+            <svg className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          </div>
+        )}
+
+        {/* --- Content Section --- */}
+        {isDeleting ? (
+          <div className="w-full bg-white border border-slate-200 rounded-[3rem] shadow-sm flex flex-col items-center justify-center gap-6 py-20">
+            <CircularProgress size={60} thickness={4} />
+            <p className="text-2xl font-bold text-slate-900">Deleting Announcement...</p>
+          </div>
+        ) : (
+          isDashboard ? (
+            <div className="w-full bg-white border border-slate-200 rounded-2xl shadow-sm overflow-x-auto">
+              <table className="w-full border-collapse min-w-[800px]">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-left">
+                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-2/5">Announcement</th>
+                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Author</th>
+                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
+                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Date Created</th>
+                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {paginatedData.map((item: any) => (
+                    <tr key={item._id} onClick={() => router.push(`/announcement/${item._id}`)} className="hover:bg-slate-50 transition-colors cursor-pointer group">
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-16 h-16 bg-white flex-shrink-0 relative border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            {item.logoURL ? (
+                              <Image
+                                src={item.logoURL}
+                                alt="announcement"
+                                fill
+                                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <span className="text-[10px] text-slate-400 font-medium uppercase">No Img</span>
+                              </div>
+                            )}
+                          </div>
+                          <span
+                            className="text-base font-semibold leading-snug text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-2"
+                            dangerouslySetInnerHTML={{ __html: formatText(item.title) }}
+                          />
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 text-center text-sm font-medium text-slate-600">
+                        {typeof item.author === 'object' ? item.author.name : (item.author || 'admin')}
+                      </td>
+
+                      <td className="py-4 px-6 text-center">
+                        {item.isEdited ? (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-600 border border-amber-200">
+                            Edited
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-600 border border-blue-300">
+                            Original
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="py-4 px-6 text-center text-sm text-slate-600 font-medium">
+                        {formatDateString(item.createdAt)}
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); router.push(`/announcement/edit/${item._id}?callbackUrl=${encodeURIComponent(pathname)}`); }}
+                            className="bg-slate-900 text-white px-6 py-1.5 rounded-full text-sm font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-sm cursor-pointer"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            disabled={isDeleting}
+                            onClick={(e) => { e.stopPropagation(); handleDelete(item._id); }}
+                            className="bg-red-500 text-white px-4 py-1.5 rounded-full text-sm font-bold hover:bg-red-600 transition-all active:scale-95 shadow-sm cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {paginatedData.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-12 text-center text-slate-500 font-medium text-lg">No announcements found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+              {paginatedData.map((announcement: any) => (
+                // 📌 เปลี่ยนจาก <Link> เป็น <div> ธรรมดา เพื่อปลดล็อกให้คลิกได้แค่ปุ่ม Read more
+                <div
+                  key={announcement._id}
+                  className="w-full h-auto md:h-[180px] min-h-[180px] bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex border border-slate-200 group"
+                >
+                  <AnnouncementCard
+                    id={announcement._id}
+                    logoSrc={announcement.logoURL}
+                    title={announcement.title}
+                    date={announcement.createdAt}
+                    className="group-hover:bg-slate-50/50 transition-colors"
+                  />
+                </div>
+              ))}
+              {paginatedData.length === 0 && (
+                <div className="col-span-1 lg:col-span-2 py-12 text-center text-slate-500 font-medium text-lg">
+                  No announcements found.
+                </div>
+              )}
+            </div>
+          )
+        )}
+
+        {/* --- Pagination --- */}
+        {calculatedTotalPage > 1 && (
+          <div className="flex justify-center mt-12 p-2 px-6 rounded-full bg-white border border-slate-200 shadow-sm">
+            <Pagination
+              count={calculatedTotalPage}
+              color="primary"
+              page={currentPage}
+              onChange={handleChangePage}
+              size="large"
+              sx={{ '& .MuiPaginationItem-root': { fontWeight: 'bold' } }}
+            />
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * const transformDriveLink = (url: string) => {
+    if (!url) return '';
+    if (url.includes('drive.google.com')) {
+      const fileId = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0];
+      return `https://lh3.googleusercontent.com/d/${fileId}`; 
+    }
+    return url;
+  };
+ */
