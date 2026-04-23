@@ -319,8 +319,10 @@ export default function AnnouncementPanel({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
               {paginatedData.map((announcement: any) => (
                 // 📌 เปลี่ยนจาก <Link> เป็น <div> ธรรมดา เพื่อปลดล็อกให้คลิกได้แค่ปุ่ม Read more
-                <div
+                <Link
+                  href={`/announcement/${announcement._id}`}
                   key={announcement._id}
+                  underline='none'
                   className="w-full h-auto md:h-[180px] min-h-[180px] bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex border border-slate-200 group"
                 >
                   <AnnouncementCard
@@ -330,7 +332,7 @@ export default function AnnouncementPanel({
                     date={announcement.createdAt}
                     className="group-hover:bg-slate-50/50 transition-colors"
                   />
-                </div>
+                </Link>
               ))}
               {paginatedData.length === 0 && (
                 <div className="col-span-1 lg:col-span-2 py-12 text-center text-slate-500 font-medium text-lg">
