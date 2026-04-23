@@ -1,9 +1,9 @@
 'use client'
 import Link from 'next/link';
-import FeaturedAnnouncementCard from './AnnouncementHomeCard';
+import AnnouncementHomeCard from './AnnouncementHomeCard';
 import AnnouncementCard from './AnnouncementCard';
 
-export default function HomeAnnouncementSection({ announcementData }: { announcementData: AnnouncementItem[] }) {
+export default function AnnouncementHomePanel({ announcementData }: { announcementData: AnnouncementItem[] }) {
   const newest = announcementData.slice(0, 3);
   const [featured, ...rest] = newest;
 
@@ -35,7 +35,7 @@ export default function HomeAnnouncementSection({ announcementData }: { announce
             href={`/announcement/${featured._id}`}
             className="flex-[1.2] h-full rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
           >
-            <FeaturedAnnouncementCard
+            <AnnouncementHomeCard
               id={featured._id}
               logoSrc={featured.logoURL}
               title={featured.title}

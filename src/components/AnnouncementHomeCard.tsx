@@ -6,7 +6,7 @@ const monthMap: Record<string, string> = {
   '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'
 };
 
-export default function FeaturedAnnouncementCard({
+export default function AnnouncementHomeCard({
   id, logoSrc, title, date, className = ''
 }: {
   id: string;

@@ -31,7 +31,7 @@ function Feedbacks({ title, comment, author, date, rating }: FeedbackProps) {
   );
 }
 
-export default function FeedbackPanel() {
+export default function ReviewHomePanel() {
   const feedbacks = [
     {
       title: "หมอหล่อบอกต่อ",

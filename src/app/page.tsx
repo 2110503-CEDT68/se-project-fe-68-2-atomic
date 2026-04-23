@@ -1,12 +1,11 @@
 import Banner from "@/components/Banner";
 import DentistPanel from "@/components/DentistPanel";
-import FeedbackPanel from "@/components/FeedbackPanel";
+import FeedbackPanel from "@/components/ReviewHomePanel";
 import Loading from "@/components/Loading";
 import getDentists from "@/libs/getDentists";
 import { Suspense } from "react";
 import getAnnouncements from "@/libs/getAnnouncements";
-import AnnouncementPanel from "@/components/AnnouncementPanel";
-import AnnouncementMenuPanel from "@/components/AnnouncementHomePanel";
+import AnnouncementHomePanel from "@/components/AnnouncementHomePanel";
 
 
 
@@ -17,7 +16,7 @@ export default async function Home() {
     <main>
       <Suspense fallback={<Loading />}>
         <Banner />
-        <AnnouncementMenuPanel announcementData={announcements?.data || []} />
+        <AnnouncementHomePanel announcementData={announcements?.data || []} />
         <DentistPanel dentistJsonReady={dentists} />
         <FeedbackPanel />
       </Suspense>
