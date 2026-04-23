@@ -3,7 +3,8 @@ import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import AnnouncementCard from './AnnouncementCard';
-import { Link, Pagination } from '@mui/material';
+import { Pagination } from '@mui/material';
+import Link from 'next/link';
 import deleteAnnouncement from '@/libs/deleteAnnoucement';
 import { CircularProgress } from '@mui/material';
 

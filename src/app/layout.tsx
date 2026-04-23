@@ -6,6 +6,7 @@ import TopMenu from "@/components/TopMenu";
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,8 +39,10 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${sukhumvit.variable} antialiased`}>
         <NextAuthProvider session={session}>
-          <TopMenu />
-          {children}
+          <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+            <TopMenu />
+            {children}
+          </AppRouterCacheProvider>
         </NextAuthProvider>
       </body>
     </html>
