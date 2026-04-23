@@ -42,7 +42,7 @@ export default function ReviewHomePanel({ reviews } : { reviews: ReviewJson }) {
           <div className="flex -ml-6 my-5">
             {reviews.data.map((review: ReviewItem) => (
               <div key={review._id} className="flex-[0_0_100%] md:flex-[0_0_33.333333%] min-w-0 pl-6">
-                <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col h-full">
+                <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col h-full select-none">
                   <h3 className="text-xl font-bold text-gray-900 mb-1">{review.title}</h3>
                   
                   <div className="flex mb-3">
