@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Rating from "@mui/material/Rating";
 import useEmblaCarousel from "embla-carousel-react";
+import dayjs from "dayjs";
 
-export default function ReviewHomePanel({ reviews } : { reviews: ReviewJson }) {
+export default function ReviewHomePanel({ reviews }: { reviews: ReviewJson }) {
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -33,28 +34,8 @@ export default function ReviewHomePanel({ reviews } : { reviews: ReviewJson }) {
     emblaApi.on("reInit", onSelect);
   }, [emblaApi, setScrollSnaps, onSelect]);
 
-  // Format Date to Show
-  const formatDateString = (date: string | Date) => {
-    if (!date) return '-';
-    const dateObj = new Date(date);
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const year = dateObj.getFullYear();
-    let hour = dateObj.getHours();
-    const period = hour >= 12 ? 'PM' : 'AM';
-
-    if (hour === 0) {
-      hour = 12;
-    } else if (hour > 12) {
-      hour -= 12;
-    }
-
-    const minute = String(dateObj.getMinutes()).padStart(2, '0');
-    return `${day}-${month}-${year} ${hour}:${minute} ${period}`;
-  };
-  
   return (
-    <section className="py-16 px-40 bg-[#e3f2fd]"> 
+    <section className="py-16 px-40 bg-[#e3f2fd]">
 
       <div className="max-w-6xl mx-auto my-5">
 
@@ -67,7 +48,7 @@ export default function ReviewHomePanel({ reviews } : { reviews: ReviewJson }) {
         <div className="relative px-4">
 
           {/* Left Button */}
-          <button 
+          <button
             className="absolute left-[-20px] md:left-[-40px] top-1/2 -translate-y-1/2 z-10 
                       w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center 
                       hover:bg-gray-50 transition-all text-blue-600 font-bold border border-gray-100"
@@ -77,7 +58,7 @@ export default function ReviewHomePanel({ reviews } : { reviews: ReviewJson }) {
           </button>
 
           {/* Right Button */}
-          <button 
+          <button
             className="absolute right-[-20px] md:right-[-40px] top-1/2 -translate-y-1/2 z-10 
                       w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center 
                       hover:bg-gray-50 transition-all text-blue-600 font-bold border border-gray-100"
@@ -96,10 +77,10 @@ export default function ReviewHomePanel({ reviews } : { reviews: ReviewJson }) {
               {reviews.data.map((review: ReviewItem) => (
                 <div key={review._id} className="flex-[0_0_100%] md:flex-[0_0_33.333333%] min-w-0 pl-6">
                   <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col h-full select-none">
-                    
+
                     {/* Title */}
                     <h3 className="text-xl font-bold text-gray-900 mb-1">{review.title}</h3>
-                    
+
                     {/* Rating */}
                     <div className="flex mb-3">
                       <Rating name="read-only" value={review.rating} readOnly />
@@ -121,18 +102,18 @@ export default function ReviewHomePanel({ reviews } : { reviews: ReviewJson }) {
 
                       {/* Date with Edited Tag */}
                       <div className="text-[10px] text-gray-400">
-                        <p className="inline">{formatDateString(review.createdAt.toString())}</p>
+                        <p className="inline">{dayjs(review.createdAt.toString()).format("DD-MM-YYYY h:mm A")}</p>
                         {
-                          review.isEdited ? 
-                          <p className="inline"> (Edited)</p>
-                          : null
+                          review.isEdited ?
+                            <p className="inline"> (Edited)</p>
+                            : null
                         }
                       </div>
 
                     </div>
 
-                  </div>  
-                  
+                  </div>
+
                 </div>
               ))}
 
@@ -148,9 +129,8 @@ export default function ReviewHomePanel({ reviews } : { reviews: ReviewJson }) {
             <button
               key={index}
               onClick={() => scrollTo(index)}
-              className={`h-2 transition-all duration-300 rounded-full ${
-                index === selectedIndex ? "w-8 bg-blue-600" : "w-2 bg-blue-200"
-              }`}
+              className={`h-2 transition-all duration-300 rounded-full ${index === selectedIndex ? "w-8 bg-blue-600" : "w-2 bg-blue-200"
+                }`}
             />
           ))}
         </div>

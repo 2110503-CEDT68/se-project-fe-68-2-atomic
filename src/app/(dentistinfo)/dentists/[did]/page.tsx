@@ -2,8 +2,10 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import Loading from "@/components/Loading";
 import getBookings from "@/libs/getBookings";
 import getDentist from "@/libs/getDentist";
+import getReviews from "@/libs/getReviews";
 import { getServerSession } from "next-auth";
 import { Suspense } from "react";
+import ReviewDentistPanel from "@/components/ReviewDentistPanel";
 import DentistDetail from "@/components/DentistDetail";
 
 export default async function DentistDetailPage({ params }: { params: Promise<{ did: string }> }) {
@@ -12,6 +14,8 @@ export default async function DentistDetailPage({ params }: { params: Promise<{ 
     const dentists = await getDentist(did);
     const session = await getServerSession(authOptions);
     const isAdmin = session?.user.role === 'admin';
+
+    const reviews = await getReviews({ page: 1, limit: 10, dentistId: did});
 
     let bookings = null;
     if (session) {
@@ -28,6 +32,7 @@ export default async function DentistDetailPage({ params }: { params: Promise<{ 
                 hasBooking={hasBooking} 
                 token={session?.user.token} 
             />
+            <ReviewDentistPanel reviews={reviews}/>
         </Suspense>
     );
 }

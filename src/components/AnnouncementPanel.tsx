@@ -7,22 +7,8 @@ import { Pagination } from '@mui/material';
 import Link from 'next/link';
 import deleteAnnouncement from '@/libs/deleteAnnoucement';
 import { CircularProgress } from '@mui/material';
-
-// Map เดือนสำหรับจัด Format วันที่
-const monthMap: Record<string, string> = {
-  '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
-  '05': 'May', '06': 'Jun', '07': 'Jul', '08': 'Aug',
-  '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'
-};
-
-// 📌 ฟังก์ชันจัด Format ข้อความ
-const formatText = (text: string) => {
-  if (!text) return '';
-  return text
-    .replace(/\\n/g, '<br />')
-    .replace(/\\t/g, '<span class="ml-8 inline-block"></span>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-};
+import { formatText } from '@/utils/formatText';
+import dayjs from 'dayjs';
 
 export default function AnnouncementPanel({
   totalPage,
@@ -52,26 +38,6 @@ export default function AnnouncementPanel({
 
 
   const ITEMS_PER_PAGE = 10;
-
-
-  const formatDateString = (date: string | Date) => {
-    if (!date) return '-';
-    const dateObj = new Date(date);
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    const month = monthMap[String(dateObj.getMonth() + 1).padStart(2, '0')];
-    const year = dateObj.getFullYear();
-    let hour = dateObj.getHours();
-    const period = hour >= 12 ? 'PM' : 'AM';
-
-    if (hour === 0) {
-      hour = 12;
-    } else if (hour > 12) {
-      hour -= 12;
-    }
-
-    const minute = String(dateObj.getMinutes()).padStart(2, '0');
-    return `${day} ${month} ${year} ${hour}:${minute} ${period}`;
-  };
 
   const handleFilterChange = (setter: React.Dispatch<React.SetStateAction<string>>, value: string) => {
     setter(value);
@@ -287,7 +253,7 @@ export default function AnnouncementPanel({
                       </td>
 
                       <td className="py-4 px-6 text-center text-sm text-slate-600 font-medium">
-                        {formatDateString(item.createdAt)}
+                        {dayjs(item.createdAt).format("DD MMM YYYY h:mm A")}
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex gap-2 justify-end">
@@ -323,7 +289,6 @@ export default function AnnouncementPanel({
                 <Link
                   href={`/announcement/${announcement._id}`}
                   key={announcement._id}
-                  underline='none'
                   className="w-full h-auto md:h-[180px] min-h-[180px] bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex border border-slate-200 group"
                 >
                   <AnnouncementCard
@@ -361,14 +326,3 @@ export default function AnnouncementPanel({
     </section>
   );
 }
-
-/**
- * const transformDriveLink = (url: string) => {
-    if (!url) return '';
-    if (url.includes('drive.google.com')) {
-      const fileId = url.split('/d/')[1]?.split('/')[0] || url.split('id=')[1]?.split('&')[0];
-      return `https://lh3.googleusercontent.com/d/${fileId}`; 
-    }
-    return url;
-  };
- */

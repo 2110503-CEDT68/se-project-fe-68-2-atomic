@@ -5,6 +5,7 @@ import { revalidateAnnouncement } from "@/libs/revalidate";
 import { TextField, CircularProgress } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import { formatText } from "@/utils/formatText";
 import updateAnnouncement from "@/libs/updateAnnouncement";
 
 // 📌 ฟังก์ชันดั้งเดิมของคุณ สำหรับแปลงลิงก์ Drive
@@ -16,15 +17,6 @@ const transformDriveLink = (url: string) => {
     }
     return url;
 };
-
-const formatText = (text: string) => {
-    if (!text) return '';
-    return text
-        .replace(/\\n/g, '<br />')
-        .replace(/\n/g, '<br />')
-        .replace(/\\t|\t/g, '<span class="ml-8 inline-block"></span>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-}
 
 export default function EditAnnouncementPanel({ token, aid, initialData }: { token: string, aid: string, initialData: any }) {
     const router = useRouter();

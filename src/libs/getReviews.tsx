@@ -1,5 +1,5 @@
-export default async function getReviews(page?: number, limit?: number) {
-  const response = await fetch(`${process.env.BACKEND_URL}/api/reviews?page=${page}&limit=${limit}`, {
+export default async function getReviews({ page, limit, dentistId }: { page?: number, limit?: number, dentistId?: string }) {
+  const response = await fetch(`${process.env.BACKEND_URL}/api/reviews?page=${page}&limit=${limit}&dentist=${dentistId}`, {
     next: { tags: ['reviews'] }
   });
 

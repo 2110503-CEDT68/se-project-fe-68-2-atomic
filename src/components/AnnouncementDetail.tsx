@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CircularProgress } from "@mui/material";
 import deleteAnnouncement from "@/libs/deleteAnnoucement";
+import dayjs from "dayjs";
+import { formatText } from "@/utils/formatText";
 
 
 export default function AnnouncementDetail({ announcementJsonReady, isAdmin, token }: { announcementJsonReady: any, isAdmin: boolean, token?: string }) {
@@ -18,7 +20,7 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin, tok
     return <div className="p-10 font-bold text-3xl text-center">ไม่พบข้อมูลประกาศ</div>;
   }
 
-  const announcementData: any = announcementJsonReady.data;
+  const announcementData: AnnouncementItem = announcementJsonReady.data;
 
   const handleDelete = async () => {
     if (!token) return;
@@ -34,36 +36,6 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin, tok
         console.error(error);
       }
     }
-  };
-
-  const monthMap: Record<string, string> = {
-    '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr',
-    '05': 'May', '06': 'Jun', '07': 'Jul', '08': 'Aug',
-    '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'
-  };
-
-  const dateObj = new Date(announcementData.createdAt);
-  const day = String(dateObj.getDate()).padStart(2, '0');
-  const month = monthMap[String(dateObj.getMonth() + 1).padStart(2, '0')];
-  const year = dateObj.getFullYear();
-  let hour = dateObj.getHours();
-  const period = hour >= 12 ? 'PM' : 'AM';
-
-  if (hour == 0) {
-    hour = 12;
-  } else if (hour > 12) {
-    hour -= 12;
-  }
-
-  const minute = String(dateObj.getMinutes()).padStart(2, '0');
-  const formattedDate = `${day} ${month} ${year} ${hour}:${minute} ${period}`;
-
-  const formatText = (text: string) => {
-    if (!text) return '';
-    return text
-      .replace(/\\n|\n/g, '<br />')
-      .replace(/\\t|\t/g, '<span class="ml-8 inline-block"></span>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   };
 
   const formattedTitle = formatText(announcementData.title);
@@ -131,7 +103,7 @@ export default function AnnouncementDetail({ announcementJsonReady, isAdmin, tok
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z"></path>
                 </svg>
-                <h1 className="inline">Date: {formattedDate}</h1>
+                <h1 className="inline">Date: {dayjs(announcementData.createdAt).format("DD MMM YYYY h:mm A")}</h1>
                 {announcementData.isEdited && <span className="inline text-amber-600 font-bold ml-1"> (Edited)</span>}
               </div>
 

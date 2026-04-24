@@ -12,7 +12,7 @@ import getReviews from "@/libs/getReviews";
 
 export default async function Home() {
   const dentists = await getDentists()
-  const reviews = await getReviews(1, 10);
+  const reviews = await getReviews({ page: 1, limit: 10 });
 
   let announcements: AnnouncementJson = await getAnnouncements(1);
 
