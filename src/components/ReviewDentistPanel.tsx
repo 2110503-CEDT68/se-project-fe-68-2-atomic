@@ -6,7 +6,9 @@ import dayjs from "dayjs"
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { Rating } from "@mui/material"
 import addReview from "@/libs/addReview"
+import deleteReview from "@/libs/deleteReview"
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 
 export default function ReviewDentistPanel({
   reviews,
@@ -18,7 +20,7 @@ export default function ReviewDentistPanel({
   reviews: ReviewJson,
   isAdmin: boolean,
   currentUserId: string | undefined,
-  token: string | undefined
+  token: string | undefined,
   did: string;
 }) {
 
@@ -44,13 +46,62 @@ export default function ReviewDentistPanel({
     }
   };
 
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!token) return;
+    
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You want to delete this comment?",
+      icon: 'warning',
+      position: 'center', 
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444', 
+      cancelButtonColor: '#1e293b',  
+      confirmButtonText: 'Yes, delete it!',
+      customClass: {
+        popup: 'rounded-[2rem]' 
+      }
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteReview(reviewId, token);
+        setOpenDropdownId(null); 
+        
+        await Swal.fire({
+          title: 'Deleted!',
+          text: 'Successfully Deleted.',
+          icon: 'success',
+          position: 'center', 
+          timer: 2000,
+          showConfirmButton: false,
+          customClass: {
+            popup: 'rounded-[2rem]' 
+          }
+        });
+        
+        router.refresh(); 
+      } catch (error) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to delete comment.',
+          icon: 'error',
+          position: 'center',
+          customClass: {
+            popup: 'rounded-[2rem]'
+          }
+        });
+        console.error("Delete review error:", error);
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
     e.preventDefault();
 
     if (!token) {
       router.push("/login");
-
       return;
     }
 
@@ -74,7 +125,6 @@ export default function ReviewDentistPanel({
       
     } catch (error) {
       alert('Error submitting review');
-      
       console.error("Error submitting review:", error);
     } finally {
       setIsSubmitting(false);
@@ -118,7 +168,6 @@ export default function ReviewDentistPanel({
           </div>
           <div className="flex justify-between pr-1">
             <button type="submit"
-
               disabled={isSubmitting}
               className="bg-black inline-flex items-center py-2.5 px-4 text-md font-bold text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 hover:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
@@ -162,7 +211,7 @@ export default function ReviewDentistPanel({
                       
                           <button
                             onClick={() => toggleDropdown(review._id)}
-                            className="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 bg-gray-100 rounded-lg hover:bg-gray-200"
+                            className="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 bg-gray-100 rounded-lg hover:bg-gray-200 cursor-pointer"
                             type="button">
                             <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
                               <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
@@ -182,7 +231,15 @@ export default function ReviewDentistPanel({
 
                                 {canDelete && (
                                   <li>
-                                    <a href="#" className="block py-2 px-4 hover:bg-gray-100 text-red-600">Delete</a>
+                                    <button
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        handleDeleteReview(review._id);
+                                      }}
+                                      className="w-full text-left block py-2 px-4 hover:bg-gray-100 text-red-600 cursor-pointer"
+                                    >
+                                      Delete
+                                    </button>
                                   </li>
                                 )}
 
