@@ -21,18 +21,26 @@ export default function RegisterPanel() {
     email: '',
     password: ''
   });
+  const [policyConsent, setPolicyConsent] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
     setIsLoading(true);
 
+    if (!policyConsent) {
+      setErrorMsg('You must accept the privacy policy to register');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       await userRegister(
         formData.name,
         formData.telephone,
         formData.email,
-        formData.password
+        formData.password,
+        policyConsent
       );
 
       const loginResult = await signIn('credentials', {
@@ -56,10 +64,10 @@ export default function RegisterPanel() {
 
     } catch (err: any) {
       console.error("Register Error:", err);
-      const is500 = err.message?.includes('500');
-      setErrorMsg(is500 
-        ? "There was a problem, please try again later." 
-        : "Unable to create an account.");
+      const is500 = err.message?.includes('500') || err.message?.includes('problem');
+      setErrorMsg(is500
+        ? "There was a problem, please try again later."
+        : err.message || "Unable to create an account.");
     } finally {
       setIsLoading(false);
     }
@@ -114,7 +122,23 @@ export default function RegisterPanel() {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
 
-            <div className="flex justify-center pt-6">
+            <div className={`flex items-start gap-3 pt-2 p-3 rounded-xl border-2 ${!policyConsent && errorMsg === 'You must accept the privacy policy to register' ? 'border-red-500' : 'border-gray-200'}`}>
+              <input
+                id="policyConsent"
+                type="checkbox"
+                checked={policyConsent}
+                onChange={(e) => setPolicyConsent(e.target.checked)}
+                className="mt-1 w-4 h-4 cursor-pointer accent-black shrink-0"
+              />
+              <label htmlFor="policyConsent" className="text-sm text-gray-600 cursor-pointer">
+                I have read and agree to the{' '}
+                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">
+                  Privacy Policy
+                </a>
+              </label>
+            </div>
+
+            <div className="flex justify-center pt-4">
               <button type='submit' className="cursor-pointer bg-black text-white text-lg font-bold py-2 px-6 rounded-full hover:bg-gray-800 transition active:scale-95 shadow-md">
                 Register
               </button>
