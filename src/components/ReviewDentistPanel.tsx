@@ -16,7 +16,7 @@ export default function ReviewDentistPanel({
   reviews: ReviewJson,
   isAdmin: boolean,
   currentUserId: string | undefined,
-  token: string
+  token: string | undefined
 }) {
 
   const params = useParams();
@@ -42,7 +42,14 @@ export default function ReviewDentistPanel({
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
+
+    if (!token) {
+      router.push("/login");
+
+      return;
+    }
 
     if (!title.trim() || !comment.trim() || !rating) {
       alert("Please provide a title, comment and rating.");
