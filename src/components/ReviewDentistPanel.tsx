@@ -55,6 +55,7 @@ export default function ReviewDentistPanel({
       icon: 'warning',
       position: 'center', 
       showCancelButton: true,
+      reverseButtons: true,
       confirmButtonColor: '#ef4444', 
       cancelButtonColor: '#1e293b',  
       confirmButtonText: 'Yes, delete it!',
