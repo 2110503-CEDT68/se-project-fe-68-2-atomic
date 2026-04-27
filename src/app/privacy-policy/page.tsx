@@ -3,6 +3,7 @@ export const metadata = {
 };
 
 export default function PrivacyPolicyPage() {
+  const emailAddress = 'support@atomic.group'
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-10 text-gray-800">
@@ -107,8 +108,8 @@ export default function PrivacyPolicyPage() {
             If you have any questions about this Privacy Policy, please contact us at:
           </p>
           <address className="not-italic mt-2 leading-relaxed text-gray-600">
-            Dentist Booking App — Support Team<br />
-            Email: <a href="mailto:support@dentistbooking.example.com" className="text-blue-600 underline hover:text-blue-800">support@dentistbooking.example.com</a>
+            Dentist Booking App — Atomic Group<br />
+            Email: <a href={`mailto:${emailAddress}`} className="text-blue-600 underline hover:text-blue-800">{emailAddress}</a>
           </address>
         </section>
       </div>
