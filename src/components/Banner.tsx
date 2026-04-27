@@ -18,7 +18,7 @@ export default async function Banner() {
           Dentist Booking System
         </h1>
         <p className="text-2xl font-semibold mb-8">
-          Gucode Group
+          Atomic Group
         </p>
 
         {

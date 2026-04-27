@@ -46,7 +46,7 @@ export default function ReviewHomePanel({ reviews }: { reviews: ReviewJson }) {
   };
 
   return (
-    <section className="py-16 px-40 bg-[#e3f2fd]">
+    <section className="py-16 px-8 md:px-20 lg:px-40 bg-[#e3f2fd]">
 
       <div className="max-w-6xl mx-auto my-5">
 

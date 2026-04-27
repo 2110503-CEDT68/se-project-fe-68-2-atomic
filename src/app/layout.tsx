@@ -25,7 +25,7 @@ const sukhumvit = localFont({
 
 export const metadata: Metadata = {
   title: "Dentist Booking App",
-  description: "Developed by Gucode Group",
+  description: "Developed by Atomic Group",
 };
 
 export default async function RootLayout({

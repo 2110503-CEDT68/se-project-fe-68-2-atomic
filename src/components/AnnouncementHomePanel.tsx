@@ -27,8 +27,7 @@ export default function AnnouncementHomePanel({ announcementData }: { announceme
         <div className="mb-8 text-left">
           <h2 className="text-4xl font-bold text-black mb-2">Announcements</h2>
         </div>
-
-        <div className="flex flex-col md:flex-row gap-6 h-[456px]">
+        <div className="flex flex-col md:flex-row gap-6 h-auto md:h-[456px]">
 
           {/* Featured card */}
           <Link
@@ -44,7 +43,7 @@ export default function AnnouncementHomePanel({ announcementData }: { announceme
           </Link>
 
           {/* Side cards */}
-          <div className="flex flex-col flex-1 gap-4 h-full">
+          <div className="flex flex-col flex-1 gap-4 h-auto md:h-full">
             {rest.length === 0 ? (
               <>
               <div className="h-[220px] rounded-xl bg-white shadow-sm flex items-center justify-center">
