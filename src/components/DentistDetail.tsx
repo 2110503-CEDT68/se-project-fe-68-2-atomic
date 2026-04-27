@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Rating } from "@mui/material";
 import deleteDentist from "@/libs/deleteDentist";
 
 export default function DentistDetail({dentistJsonReady, did, isAdmin, hasBooking, token, isEditView = false}: {dentistJsonReady: DentistJsonSingle, did: string, isAdmin: boolean, hasBooking: boolean, token?: string, isEditView?: boolean;}) {
@@ -56,6 +56,11 @@ export default function DentistDetail({dentistJsonReady, did, isAdmin, hasBookin
                             <h1 className="text-3xl md:text-5xl font-bold text-black mb-6">
                                 {dentistJsonReady.data.name}
                             </h1>
+
+                            <div className="flex flex-row my-2">
+                                <h1 className="text-xl font-bold mr-2">{dentistJsonReady.data.averageRating}</h1>
+                                <Rating name="half-rating-read" defaultValue={dentistJsonReady.data.averageRating} precision={0.1} readOnly />
+                            </div>
 
                             <p className="text-xl md:text-2xl font-bold text-black mb-4 flex flex-wrap gap-x-4">
                                 Area of Expertise:

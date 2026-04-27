@@ -42,7 +42,7 @@ export default function DentistPanel({dentistJsonReady, isAdmin=false, showSearc
                 :
                 filteredDentists.map((dentist: DentistItem) => (
                   <Link key={dentist.id} href={`/dentists/${dentist.id}`}>
-                    <DentistCard imgSrc={dentist.imageURL} dentistName={dentist.name} dentistExpertise={dentist.areaOfExpertise} dentistExperience={dentist.yearsOfExperience}/>
+                    <DentistCard imgSrc={dentist.imageURL} dentistName={dentist.name} dentistExpertise={dentist.areaOfExpertise} dentistExperience={dentist.yearsOfExperience} rating={dentist.averageRating}/>
                   </Link>
                 ))
               }

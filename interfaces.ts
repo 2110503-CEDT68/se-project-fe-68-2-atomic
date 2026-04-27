@@ -4,8 +4,8 @@ interface DentistItem {
 	yearsOfExperience:number,
 	areaOfExpertise:string,
 	imageURL:string,
-	createdAt:string
-
+	createdAt:string,
+  averageRating: number
 }
 interface DentistJson {
 	success:boolean,
