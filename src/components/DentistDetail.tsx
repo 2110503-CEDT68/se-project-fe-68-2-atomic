@@ -70,7 +70,7 @@ export default function DentistDetail({dentistJsonReady, did, isAdmin, hasBookin
                             </p>
 
                             <div className="flex flex-row my-2 items-center mb-10">
-                                <h1 className="text-xl font-bold mr-2">{dentistJsonReady.data.averageRating}</h1>
+                                <h1 className="text-xl font-bold mr-2">{dentistJsonReady.data.averageRating.toFixed(1)}</h1>
                                 <Rating name="half-rating-read" defaultValue={dentistJsonReady.data.averageRating} precision={0.1} readOnly />
                             </div>
 
