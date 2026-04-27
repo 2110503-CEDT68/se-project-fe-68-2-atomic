@@ -13,7 +13,7 @@ export default function DentistCard({ imgSrc, dentistName, dentistExpertise, den
                     <p className="text-sm font-semibold text-gray-800">Expertise: <span className="font-normal">{dentistExpertise}</span></p>
                     <p className="text-sm font-semibold text-gray-800 mt-2">Years of Experience: <span className="font-normal">{dentistExperience} {dentistExperience === 1 ? 'year' : 'years'}</span></p>
                     <div className="flex flex-row my-2 items-center">
-                        {/* <h1 className="mr-1">{rating}</h1> */}
+                        {/* <h1 className="mr-1 font-bold">{rating}</h1> */}
                         <Rating defaultValue={rating} precision={0.1} readOnly />
                     </div>
                 </div>

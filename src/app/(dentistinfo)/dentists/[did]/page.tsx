@@ -7,20 +7,15 @@ import { getServerSession } from "next-auth";
 import { Suspense } from "react";
 import ReviewDentistPanel from "@/components/ReviewDentistPanel";
 import DentistDetail from "@/components/DentistDetail";
-import getDentists from "@/libs/getDentists";
 
 export default async function DentistDetailPage({ params }: { params: Promise<{ did: string }> }) {
     const { did } = await params;
     
     const dentist = await getDentist(did);
-    const dentists = await getDentists();
     const session = await getServerSession(authOptions);
     const isAdmin = session?.user.role === 'admin';
     const currentUserId = session?.user.id
     const token = session?.user.token
-
-    console.log(dentist.data);
-    console.log(dentists.data);
 
     const reviews = await getReviews({ page: 1, limit: 1000, dentistId: did});
 

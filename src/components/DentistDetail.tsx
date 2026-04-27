@@ -30,7 +30,7 @@ export default function DentistDetail({dentistJsonReady, did, isAdmin, hasBookin
     };
 
     return (
-        <div className="min-h-[calc(100vh-64px)] bg-white flex flex-col justify-center py-10">
+        <div className="bg-white flex flex-col justify-center py-10 m-10">
             <main className="max-w-6xl mx-auto px-8 w-full">
                 
                 {isDeleting ? (
@@ -57,22 +57,22 @@ export default function DentistDetail({dentistJsonReady, did, isAdmin, hasBookin
                                 {dentistJsonReady.data.name}
                             </h1>
 
-                            <div className="flex flex-row my-2">
-                                <h1 className="text-xl font-bold mr-2">{dentistJsonReady.data.averageRating}</h1>
-                                <Rating name="half-rating-read" defaultValue={dentistJsonReady.data.averageRating} precision={0.1} readOnly />
-                            </div>
-
                             <p className="text-xl md:text-2xl font-bold text-black mb-4 flex flex-wrap gap-x-4">
                                 Area of Expertise:
                                 <span className="font-normal">{dentistJsonReady.data.areaOfExpertise}</span>
                             </p>
 
-                            <p className="text-xl md:text-2xl font-bold text-black mb-10 flex flex-wrap gap-x-4">
+                            <p className="text-xl md:text-2xl font-bold text-black mb-4 flex flex-wrap gap-x-4">
                                 Years of Experience:
                                 <span className="font-normal">
                                     {dentistJsonReady.data.yearsOfExperience} {dentistJsonReady.data.yearsOfExperience === 1 ? "year" : "years"}
                                 </span>
                             </p>
+
+                            <div className="flex flex-row my-2 items-center mb-10">
+                                <h1 className="text-xl font-bold mr-2">{dentistJsonReady.data.averageRating}</h1>
+                                <Rating name="half-rating-read" defaultValue={dentistJsonReady.data.averageRating} precision={0.1} readOnly />
+                            </div>
 
                             {/* Action Buttons */}
                             {

@@ -162,7 +162,7 @@ export default function ReviewDentistPanel({
   };
 
   return (
-    <section className="bg-white py-8 lg:py-16 antialiased">
+    <section className="bg-white mx-2 my-2 pb-8 lg:pb-16 antialiased">
       <div className="max-w-4xl p-4 mx-auto rounded-lg shadow-xl">
 
         <div className="flex justify-between items-center mb-6">
